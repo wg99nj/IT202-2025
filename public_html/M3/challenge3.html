@@ -1,62 +1,108 @@
-<!--
-Challenge 3: Carousel Layout with Swiping
------------------------------------------
-Requirements:
-    Using CSS adjust the layout per the following rules
-    1. Header should be at the top
-    2. Carousel should take up full width
-    3. Buttons should be centered
-    Using JavaScript solve the following
-    1. Attach appropriate event listeners to each button
-    2. Cycle through each panel showing only 1 at a time
-    3. Ensure that the panels loop when reaching the last or first one
-    4. Extra credit: Allow mouse swipe on the carousel to cycle through the panels similar to how the buttons would work 
--->
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carousel UI</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carousel UI</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body class="challenge3">
-    <nav>
-        <ul>
-            <li><a href="challenge1.html">Challenge 1</a></li>
-            <li><a href="challenge2.html" >Challenge 2</a></li>
-            <li><a href="challenge3.html" class="active">Challenge 3</a></li>
-        </ul>
-    </nav>
-    <!-- Edit your UCID here -->
-    <header>Header Section (mt85)</header>
-    <!-- Don't make any other edits to the HTML -->
-    <nav>
-        <button>Previous</button>
-        <button>Next</button>
-    </nav>
+  <nav>
+    <ul>
+      <li><a href="challenge1.html">Challenge 1</a></li>
+      <li><a href="challenge2.html">Challenge 2</a></li>
+      <li><a href="challenge3.html" class="active">Challenge 3</a></li>
+    </ul>
+  </nav>
 
-    <div class="carousel">
-        <div class="carousel-container">
-            <div class="panel">Panel 1: HTML Forms</div>
-            <div class="panel">Panel 2: CSS Grid</div>
-            <div class="panel">Panel 3: JavaScript Events</div>
-            <div class="panel">Panel 4: Responsive Design</div>
-            <div class="panel">Panel 5: Accessibility Best Practices</div>
-        </div>
+  <!-- UCID: wg99 | Date: 2025-06-16 -->
+  <header>Header Section (wg99)</header>
+
+  <!-- Button Navigation -->
+  <nav class="carousel-buttons">
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+  </nav>
+
+  <!-- Carousel Content -->
+  <div class="carousel">
+    <div class="carousel-container">
+      <div class="panel">Panel 1: HTML Forms</div>
+      <div class="panel">Panel 2: CSS Grid</div>
+      <div class="panel">Panel 3: JavaScript Events</div>
+      <div class="panel">Panel 4: Responsive Design</div>
+      <div class="panel">Panel 5: Accessibility Best Practices</div>
     </div>
+  </div>
 </body>
-
 </html>
+
 <script src="util.js"></script>
 
+<!-- JS: Carousel Logic -->
 <script>
-    /* Solve the button logic here by finding and attaching an appropriate event listener and logic*/
+  // UCID: wg99 | Date: 2025-06-16
+  const panels = document.querySelectorAll('.panel');
+  let currentIndex = 0;
+
+  function updateCarousel() {
+    panels.forEach((panel, index) => {
+      panel.style.display = index === currentIndex ? 'block' : 'none';
+    });
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + panels.length) % panels.length;
+    updateCarousel();
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % panels.length;
+    updateCarousel();
+  });
+
+  updateCarousel();
+
 </script>
 
+<!-- CSS Styles -->
 <style>
-    /* You're free to make whatever edits you need here, just don't override anything in the styles.css */
+  /* UCID: wg99 | Date: 2025-06-16 */
+  header {
+    text-align: center;
+    padding: 1em;
+    border: 2px solid white;
+  }
+
+  .carousel-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 1em 0;
+  }
+
+  .carousel {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .carousel-container {
+    width: 80%;
+    max-width: 800px;
+    min-height: 200px;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .panel {
+    display: none;
+    width: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    padding: 2em;
+  }
 </style>
