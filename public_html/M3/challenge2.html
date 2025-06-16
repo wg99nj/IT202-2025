@@ -36,7 +36,7 @@ Requirements:
         </ul>
     </nav>
     <!-- Edit your UCID here -->
-    <header>Header Section (mt85)</header>
+    <header>Header Section (wg99)</header>
     <!-- Don't make any other edits to the HTML -->
     <div class="container">
         <aside id="left-sidebar">
@@ -95,9 +95,66 @@ Requirements:
 <script src="util.js"></script>
 
 <script>
-    /* Solve the button logic here by finding and attaching an appropriate event listener and logic*/
+// wg99 - 2025-06-16: Add sidebar toggle logic
+   // Left sidebar toggle
+  document.querySelector("#left-sidebar button").addEventListener("click", () => {
+    const sidebar = document.getElementById("left-sidebar");
+    sidebar.classList.toggle("collapsed");
+
+    const btn = sidebar.querySelector("button");
+    btn.innerHTML = sidebar.classList.contains("collapsed") ? "&lt;" : "&gt;";
+  });
+
+  // Right sidebar toggle 
+  document.querySelector("#right-sidebar button").addEventListener("click", () => {
+    const sidebar = document.getElementById("right-sidebar");
+    sidebar.classList.toggle("collapsed");
+
+    const btn = sidebar.querySelector("button");
+    btn.innerHTML = sidebar.classList.contains("collapsed") ? "&gt;" : "&lt;";
+  });
 </script>
 
 <style>
-    /* You're free to make whatever edits you need here, just don't override anything in the styles.css */
+      /* wg99 - 2025-06-16: Custom layout styling */
+     /* Layout container */
+  .container {
+    display: flex;
+    height: calc(100vh - 40px); /* Adjust for header height if needed */
+  }
+
+  header {
+    height: 40px;
+    border: 2px solid white;
+  }
+
+  aside {
+    width: 15%;
+    min-width: 50px;
+    border: 2px solid white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: width 0.3s ease;
+  }
+
+  main.content {
+    flex-grow: 1;
+    border: 2px solid white;
+    padding: 1em;
+    overflow-y: auto;
+  }
+
+  aside button {
+    margin: 10px 0;
+    z-index: 1;
+  }
+
+  aside.collapsed {
+    width: 50px;
+  }
+
+  aside.collapsed ul {
+    display: none;
+  }
 </style>
