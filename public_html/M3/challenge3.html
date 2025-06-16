@@ -64,6 +64,28 @@
 
   updateCarousel();
 
+  // Extra Credit: Swipe functionality
+  // UCID: wg99 | Date: 2025-06-16
+  let startX = 0;
+  const container = document.querySelector('.carousel-container');
+
+  container.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  container.addEventListener('touchend', (e) => {
+    let endX = e.changedTouches[0].clientX;
+    let deltaX = startX - endX;
+
+    if (Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        currentIndex = (currentIndex + 1) % panels.length; // swipe left
+      } else {
+        currentIndex = (currentIndex - 1 + panels.length) % panels.length; // swipe right
+      }
+      updateCarousel();
+    }
+  });
 </script>
 
 <!-- CSS Styles -->
