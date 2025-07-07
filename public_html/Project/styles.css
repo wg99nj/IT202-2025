@@ -1,0 +1,95 @@
+/*
+UCID: wg99
+Date: 2025-07-06
+Custom styles for API-Powered Recipe Explorer project
+*/
+
+body {
+    background: linear-gradient(120deg, #f0f4f9 0%, #e0e7ef 100%);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+.register-container, .login-container {
+    max-width: 420px;
+    margin: 3em auto;
+    background: #fff;
+    padding: 2.5em 2em 2em 2em;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px #b3c2d1;
+    border: 1px solid #e3e9f0;
+}
+
+h2 {
+    text-align: center;
+    color: #2a4d69;
+    margin-bottom: 1.5em;
+}
+
+.form-group {
+    margin-bottom: 1.3em;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.4em;
+    font-weight: 500;
+    color: #2a4d69;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.6em;
+    border-radius: 6px;
+    border: 1px solid #b3c2d1;
+    font-size: 1em;
+    background: #f7fafc;
+    transition: border 0.2s;
+}
+.form-group input:focus {
+    border: 1.5px solid #4f8ad8;
+    outline: none;
+    background: #eef6fb;
+}
+
+.error-msg {
+    color: #b00;
+    background: #ffeaea;
+    padding: 0.7em;
+    border-radius: 6px;
+    margin-bottom: 1.2em;
+    border: 1px solid #f5c2c7;
+}
+.success-msg {
+    color: #207a3c;
+    background: #e6f9ed;
+    padding: 0.7em;
+    border-radius: 6px;
+    margin-bottom: 1.2em;
+    border: 1px solid #b7e4c7;
+}
+
+button {
+    width: 100%;
+    padding: 0.9em;
+    background: linear-gradient(90deg, #4f8ad8 0%, #2a4d69 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 0.5em;
+}
+button:hover {
+    background: linear-gradient(90deg, #2a4d69 0%, #4f8ad8 100%);
+}
+a {
+    color: #4f8ad8;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
