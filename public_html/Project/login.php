@@ -1,6 +1,15 @@
 <?php
 require(__DIR__ . "/../../partials/nav.php");
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../Project/styles.css">
+</head>
+<body>
 <h3>Login</h3>
 <form onsubmit="return validate(this)" method="POST">
     <div>

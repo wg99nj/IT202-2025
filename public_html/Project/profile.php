@@ -4,6 +4,15 @@ if (!is_logged_in()) {
     die(header("Location: login.php"));
 }
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="../Project/styles.css">
+</head>
+<body>
 <?php
 $user_id = get_user_id(); // get id from session
 $email = get_user_email(); // get email from session
