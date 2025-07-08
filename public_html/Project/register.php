@@ -34,6 +34,10 @@ require(__DIR__ . "/../../partials/nav.php");
         <input type="password" name="confirm" required minlength="8" />
     </div>
     <input type="submit" value="Register" />
+    <div style="margin-top: 1em;">
+        <span>Already have an account?</span>
+        <a href="login.php" class="btn-link">Login</a>
+    </div>
 </form>
 <script>
     // JS validation | UCID: wg99 | Date: 2025-07-08

@@ -22,6 +22,10 @@ require(__DIR__ . "/../../partials/nav.php");
         <input type="password" id="pw" name="password" required minlength="8" />
     </div>
     <input type="submit" value="Login" />
+    <div style="margin-top: 1em;">
+        <span>Don't have an account?</span>
+        <a href="register.php" class="btn-link">Register</a>
+    </div>
 </form>
 <script>
     // UCID: wg99 | Date: 2025-07-08 | JS validation for login form
@@ -115,6 +119,7 @@ if (isset($_POST["email"], $_POST["password"])) {
     }
 }
 ?>
+
 
 <?php
 require(__DIR__ . "/../../partials/flash.php");
