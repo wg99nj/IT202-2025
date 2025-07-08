@@ -1,95 +1,190 @@
-/*
-UCID: wg99
-Date: 2025-07-06
-Custom styles for API-Powered Recipe Explorer project
-*/
+/* Moved from flash.php*/
+/* Define basic colors for standard bootstrap alert classes, scoped to .container#flash */
+/* This will be later moved into a separate CSS file in a future lesson */
+/* And one we add bootstrap, we will use the bootstrap classes instead of these */
 
+.container#flash {
+
+    .alert {
+        padding: 1rem;
+        border-radius: 0.25rem;
+        font-size: 1rem;
+    }
+
+    .alert-primary {
+        background-color: #cfe2ff;
+        color: #084298;
+    }
+
+    .alert-secondary {
+        background-color: #e2e3e5;
+        color: #41464b;
+    }
+
+    .alert-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+    }
+
+    .alert-info {
+        background-color: #cff4fc;
+        color: #055160;
+    }
+
+    .alert-light {
+        background-color: #fefefe;
+        color: #636464;
+    }
+
+    .alert-dark {
+        background-color: #212529;
+        color: #fff;
+    }
+}
+nav li {
+    display: inline;
+    background-color: rebeccapurple;
+}
+
+nav li a {
+/* Custom pleasant theme for IT202 Project - UCID: wg99 | Date: 2025-07-08 */
 body {
-    background: linear-gradient(120deg, #f0f4f9 0%, #e0e7ef 100%);
+    background: linear-gradient(120deg, #f0f4f8 0%, #e0e7ff 100%);
     font-family: 'Segoe UI', Arial, sans-serif;
     color: #222;
     margin: 0;
     padding: 0;
 }
 
-.register-container, .login-container {
-    max-width: 420px;
-    margin: 3em auto;
+form {
     background: #fff;
-    padding: 2.5em 2em 2em 2em;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px #b3c2d1;
-    border: 1px solid #e3e9f0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 2em 2.5em 1.5em 2.5em;
+    max-width: 400px;
+    margin: 2em auto;
 }
 
-h2 {
-    text-align: center;
-    color: #2a4d69;
+form label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    width: 100%;
+    padding: 0.7em;
+    margin-bottom: 1.2em;
+    border: 1px solid #bfcfff;
+    border-radius: 5px;
+    font-size: 1em;
+    background: #f7faff;
+    transition: border 0.2s;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus {
+    border: 1.5px solid #6c63ff;
+    outline: none;
+}
+
+form input[type="submit"] {
+    background: #6c63ff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 0.7em 2em;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+form input[type="submit"]:hover {
+    background: #5548c8;
+}
+
+.mb-3 {
     margin-bottom: 1.5em;
 }
 
-.form-group {
-    margin-bottom: 1.3em;
-}
-.form-group label {
-    display: block;
-    margin-bottom: 0.4em;
-    font-weight: 500;
-    color: #2a4d69;
-}
-.form-group input {
-    width: 100%;
-    padding: 0.6em;
-    border-radius: 6px;
-    border: 1px solid #b3c2d1;
-    font-size: 1em;
-    background: #f7fafc;
-    transition: border 0.2s;
-}
-.form-group input:focus {
-    border: 1.5px solid #4f8ad8;
-    outline: none;
-    background: #eef6fb;
+.alert {
+    margin-top: 1em;
 }
 
-.error-msg {
-    color: #b00;
-    background: #ffeaea;
-    padding: 0.7em;
-    border-radius: 6px;
-    margin-bottom: 1.2em;
-    border: 1px solid #f5c2c7;
-}
-.success-msg {
-    color: #207a3c;
-    background: #e6f9ed;
-    padding: 0.7em;
-    border-radius: 6px;
-    margin-bottom: 1.2em;
-    border: 1px solid #b7e4c7;
+nav li {
+    display: inline;
+    background-color: #6c63ff;
+    border-radius: 5px;
+    margin-right: 0.5em;
+    padding: 0.3em 1em;
 }
 
-button {
-    width: 100%;
-    padding: 0.9em;
-    background: linear-gradient(90deg, #4f8ad8 0%, #2a4d69 100%);
+nav li a {
     color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 1.1em;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-top: 0.5em;
-}
-button:hover {
-    background: linear-gradient(90deg, #2a4d69 0%, #4f8ad8 100%);
-}
-a {
-    color: #4f8ad8;
     text-decoration: none;
+    font-weight: 500;
 }
-a:hover {
+
+nav li a:hover {
     text-decoration: underline;
+}
+    color: rgb(4, 179, 120);
+    padding: .25rem;
+}
+nav li a:hover {
+    color: pink;
+}
+
+nav::after {
+    text-align: center;
+    content: "(*Edit the hideous css)";
+    color:red;
+
+}
+label{
+    border:#212529 dashed 2px;
+    background-color: bisque;
+}
+input {
+    border-radius: 25%;
+    padding: .25rem;
+}
+input:hover{
+    transform: rotateZ(10deg);
+}
+form,h3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+table{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body {
+    background-color: rgb(0, 68, 48);
+    color: rgb(255, 19, 235);
+}
+input[type="submit"]:hover {
+    transform: scale(1.15)
+}
+input[type="submit"]:active {
+     transform: scale(.75)
 }

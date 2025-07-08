@@ -34,10 +34,9 @@ if(!$db_url || count($db_url) === 0){
     throw new Exception("Config parsing error, check the logs for further details");
 }
 else{
-    // Provide default values if keys are missing
-    $dbhost   = isset($db_url["host"]) ? $db_url["host"] : "localhost";
-    $dbuser   = isset($db_url["user"]) ? $db_url["user"] : "your_db_user";
-    $dbpass   = isset($db_url["pass"]) ? $db_url["pass"] : "your_db_pass";
-    $dbdatabase = isset($db_url["path"]) ? ltrim($db_url["path"], "/") : "your_db_name";
+    $dbhost   = $db_url["host"];
+    $dbuser = $db_url["user"];
+    $dbpass = $db_url["pass"];
+    $dbdatabase       = substr($db_url["path"],1);
 }
 ?>

@@ -1,107 +1,142 @@
 <?php
-// UCID: wg99
-// Date: 2025-07-06
-// Login page for API-Powered Recipe Explorer
-// Handles user login, validation, and feedback
+require(__DIR__ . "/../../partials/nav.php");
+?>
+<h3>Login</h3>
+    <div>
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" required />
+    </div>
+    <div>
+        <label for="pw">Password</label>
+        <input type="password" id="pw" name="password" required minlength="8" />
+    </div>
+    <input type="submit" value="Login" />
+</form>
+<script>
+    function validate(form) {
+        //TODO 1: implement JavaScript validation (you'll do this on your own towards the end of Milestone1)
+        //ensure it returns false for an error and true for success
 
-require_once(__DIR__ . '/../../lib/db.php');
-session_start();
+        return true;
+    }
+</script>
+<?php
+//TODO 2: add PHP Code
+if (isset($_POST["email"], $_POST["password"])) {
 
-// Initialize variables
-$login = '';
-$errors = [];
+    $email = se($_POST, "email", "", false);
+    $password = se($_POST, "password", "", false);
+    // TODO 3: validate/use
+    $hasError = false;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $login = trim($_POST['login'] ?? '');
-    $password = $_POST['password'] ?? '';
+    if (empty($email)) {
+        flash("Email must not be empty.", "danger");
+        $hasError = true;
+    }
+    // Sanitize and validate email
+    $email = sanitize_email($email);
+    if (!is_valid_email($email)) {
+        flash("Invalid email address.", "danger");
+        $hasError = true;
+    }
+    if (empty($password)) {
+        flash("Password must not be empty.", "danger");
+        $hasError = true;
+    }
 
-    // PHP validation
-    if (!$login) $errors[] = 'Username or Email is required.';
-    if (!$password) $errors[] = 'Password is required.';
+    if (!is_valid_password($password)) {
+        //echo "Password too short<br>";
+        flash("Password must be at least 8 characters long.", "danger");
+        $hasError = true;
+    }
 
-    if (!$errors) {
-        try {
+    if (!$hasError) {
+
+        // TODO 4: Check password and fetch user
+        if (!$hasError) {
+            //TODO 4: Check password and fetch user
             $db = getDB();
-            $stmt = $db->prepare('SELECT * FROM users WHERE username = :login OR email = :login LIMIT 1');
-            $stmt->execute([':login' => $login]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($user && password_verify($password, $user['password'])) {
-                // Fetch roles
-                $roleStmt = $db->prepare('SELECT r.name FROM roles r JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = :uid AND ur.is_active = 1');
-                $roleStmt->execute([':uid' => $user['id']]);
-                $roles = $roleStmt->fetchAll(PDO::FETCH_COLUMN);
-                // Set session
-                $_SESSION['user'] = [
-                    'id' => $user['id'],
-                    'username' => $user['username'],
-                    'email' => $user['email'],
-                    'roles' => $roles
-                ];
-                header('Location: dashboard.php');
-                exit;
-            } else {
-                if ($user) {
-                    $errors[] = 'Incorrect password.';
-                } else {
-                    $errors[] = 'Account not found.';
+            $stmt = $db->prepare("SELECT id, email, password, username from Users where email = :email");
+            try {
+                $r = $stmt->execute([":email" => $email]);
+                if ($r) {
+                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $ambigify = false; // flag to indicate ambiguous login attempt (reduce TMI)
+                    if ($user) {
+                        $hash = $user["password"];
+                        unset($user["password"]);
+                        if (password_verify($password, $hash)) {
+
+                            $_SESSION["user"] = $user; // add the data to the active session
+                            try {
+                                //lookup potential roles
+                                $stmt = $db->prepare("SELECT Roles.name FROM Roles
+                                JOIN UserRoles on Roles.id = UserRoles.role_id
+                                where UserRoles.user_id = :user_id and Roles.is_active = 1 
+                                and UserRoles.is_active = 1");
+                                $stmt->execute([":user_id" =>get_user_id()]);
+                                $roles = $stmt->fetchAll(PDO::FETCH_ASSOC); //fetch all since we'll want multiple
+                            } catch (Exception $e) {
+                                error_log(var_export($e, true));
+                            }
+                            //save roles or empty array
+                            $_SESSION["user"]["roles"] = isset($roles)?$roles:[];
+                           
+                            die(header("Location: landing.php"));
+                        } else {
+                            //echo "Invalid password<br>";
+                            $ambigify = true; // ambiguous login attempt
+                        }
+                    } else {
+                        //echo "Email not found<br>";
+                        $ambigify = true; // ambiguous login attempt
+                    }
+                    if ($ambigify) {
+                        flash("Invalid login attempt. Please check your email and password.", "danger");
+                    }
                 }
+            } catch (Exception $e) {
+                //echo "There was an error logging in<br>"; // user-friendly message
+                flash("There was an error logging in. Please try again later.", "danger");
+                error_log("Login Error: " . var_export($e, true)); // log the technical error for debugging
             }
-        } catch (Exception $e) {
-            error_log('Login error: ' . $e->getMessage());
-            $errors[] = 'An unexpected error occurred. Please try again later.';
         }
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login - Recipe Explorer</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        /* (Moved to styles.css for project uniqueness) */
-    </style>
-    <script>
-    // UCID: wg99 | Date: 2025-07-06
-    // JS validation for login form
-    function validate() {
-        let login = document.forms['loginForm']['login'].value.trim();
-        let password = document.forms['loginForm']['password'].value;
-        let errors = [];
-        if (!login) errors.push('Username or Email is required.');
-        if (!password) errors.push('Password is required.');
-        if (errors.length) {
-            alert(errors.join('\n'));
-            return false;
-        }
-        return true;
-    }
-    </script>
-</head>
-<body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <?php if (isset($_GET['logout']) && $_GET['logout'] == 1): ?>
-            <div class="success-msg">You have been successfully logged out.</div>
-        <?php endif; ?>
-        <?php if ($errors): ?>
-            <div class="error-msg">
-                <?php foreach ($errors as $e) echo htmlspecialchars($e) . '<br>'; ?>
-            </div>
-        <?php endif; ?>
-        <form name="loginForm" method="post" onsubmit="return validate();" autocomplete="off">
-            <div class="form-group">
-                <label for="login">Username or Email</label>
-                <input type="text" id="login" name="login" required maxlength="100" value="<?php echo htmlspecialchars($login); ?>">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required maxlength="60">
-            </div>
-            <button type="submit">Login</button>
-        </form>
-        <p style="text-align:center;margin-top:1em;">Don't have an account? <a href="register.php">Register here</a>.</p>
+
+<?php
+require(__DIR__ . "/../../partials/flash.php");
+?>
+<form onsubmit="return validate(this)" method="POST" novalidate>
+    <div>
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" required pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" maxlength="100" />
     </div>
-</body>
-</html>
+    <div>
+        <label for="pw">Password</label>
+        <input type="password" id="pw" name="password" required minlength="8" maxlength="60" />
+    </div>
+    <input type="submit" value="Login" />
+</form>
+<script src="helpers.js"></script>
+<script>
+    // UCID: wg99 | Date: 2025-07-06 | JS validation for login form
+    function validate(form) {
+        let email = form.email.value.trim();
+        let pw = form.password.value;
+        let valid = true;
+        if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
+            flash("Please enter a valid email address.", "danger");
+            valid = false;
+        }
+        if (pw.length < 8) {
+            flash("Password must be at least 8 characters.", "danger");
+            valid = false;
+        }
+        return valid;
+    }
+</script>
+<?php
+// UCID: wg99 | Date: 2025-07-07 | PHP login logic
+// ...existing code...

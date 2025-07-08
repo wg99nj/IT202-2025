@@ -1,108 +1,217 @@
 <?php
-// UCID: wg99
-// Date: 2025-07-07
-// User Profile page for API-Powered Recipe Explorer
-// Shows logged-in user's info and allows email/password update (basic)
-
-require_once(__DIR__ . '/../../../lib/db.php');
-require_once('protected.php'); // Ensures user is logged in
-
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
+require_once(__DIR__ . "/../../partials/nav.php");
+if (!is_logged_in()) {
+    die(header("Location: login.php"));
 }
-
-$user_id = $_SESSION['user_id'];
-$success = $error = '';
-
-// Fetch user info
-try {
-    $db = getDB();
-    $stmt = $db->prepare('SELECT username, email FROM users WHERE id = :id');
-    $stmt->execute([':id' => $user_id]);
-    $user = $stmt->fetch();
-    if (!$user) throw new Exception('User not found.');
-} catch (Exception $e) {
-    $error = 'Could not load profile.';
-}
-
-// Handle email/password update
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $new_email = trim($_POST['email'] ?? '');
-    $new_pass = $_POST['password'] ?? '';
-    $confirm = $_POST['confirm'] ?? '';
-    $updates = [];
-    if ($new_email && $new_email !== $user['email']) {
-        if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
-            $error = 'Invalid email format.';
-        } else {
-            $updates['email'] = $new_email;
+?>
+<?php
+$user_id = get_user_id(); // get id from session
+$email = get_user_email(); // get email from session
+$username = get_username(); // get username from session
+// handle email/username update
+if (isset($_POST["email"], $_POST["username"])) {
+    $new_email = se($_POST, "email", null, false);
+    $new_username = se($_POST, "username", null, false);
+    $hasError = false;
+    // validate format
+    if (empty($new_email)) {
+        //echo "Email must not be empty<br>";
+        flash("Email must not be empty.", "danger");
+        $hasError = true;
+    }
+    // Sanitize and validate email
+    $new_email = sanitize_email($new_email);
+    if (!is_valid_email($new_email)) {
+        //echo "Invalid email address<br>";
+        flash("Invalid email address.", "danger");
+        $hasError = true;
+    }
+    if (!is_valid_username($new_username)) {
+        flash("Username must be lowercase, alphanumerical, and can only contain _ or -", "danger");
+        $hasError = true;
+    }
+    // check for changes
+    if (($username != $new_username || $email != $new_email) && !$hasError) {
+        $saved = false;
+        $params = [":email" => $new_email, ":username" => $new_username, ":id" => $user_id];
+        $db = getDB();
+        $stmt = $db->prepare("UPDATE Users set email = :email, username = :username where id = :id");
+        try {
+            $stmt->execute($params);
+            $updated_rows = $stmt->rowCount();
+            if ($updated_rows === 0) {
+                flash("No changes made", "warning");
+            } else if ($updated_rows == 1) {
+                flash("Profile saved", "success");
+                $saved = true;
+            } else {
+                // this shouldn't happen, but we log it just in case
+                error_log("Unexpected number of rows updated: " . $updated_rows);
+            }
+        } catch (PDOException $e) {
+            // handle existing email/username error
+            users_check_duplicate($e);
+        } catch (Exception $e) {
+            flash("An unexpected error occurred, please try again", "danger");
+            error_log("Unexpected Error updating user details: " . var_export($e, true));
+        }
+        if ($saved) {
+            //select fresh data from table
+            $stmt = $db->prepare("SELECT email, username from Users where id = :id LIMIT 1");
+            try {
+                $stmt->execute([":id" => $user_id]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($user) {
+                    //$_SESSION["user"] = $user; // don't overwrite the entire session data, just update the specific fields
+                    $_SESSION["user"]["email"] = $user["email"];
+                    $_SESSION["user"]["username"] = $user["username"];
+                    // since this comes after the setting of $username and $email at the top, we'll apply the edits to them too
+                    $username = $user["username"];
+                    $email = $user["email"];
+                } else {
+                    // This shouldn't happen, but we add logs/notification just in case
+                    flash("User doesn't exist", "danger");
+                    error_log("User doesn't exist");
+                }
+            } catch (PDOException $e) {
+                flash("An unexpected error occurred, please try again", "danger");
+                error_log("DB Error fetching user details: " . var_export($e, true));
+            } catch (Exception $e) {
+                flash("An unexpected error occurred, please try again", "danger");
+                error_log("Unexpected Error fetching user details: " . var_export($e, true));
+            }
         }
     }
-    if ($new_pass) {
-        if (strlen($new_pass) < 6) {
-            $error = 'Password must be at least 6 characters.';
-        } elseif ($new_pass !== $confirm) {
-            $error = 'Passwords do not match.';
+}
+// handle password update
+if (isset($_POST["currentPassword"], $_POST["newPassword"], $_POST["confirmPassword"])) {
+
+    //check/update password
+    $current_password = se($_POST, "currentPassword", null, false);
+    $new_password = se($_POST, "newPassword", null, false);
+    $confirm_password = se($_POST, "confirmPassword", null, false);
+    // require all 3 to be set before attempting to process
+    $can_update = !empty($current_password) && !empty($new_password) && !empty($confirm_password);
+    if ($can_update) {
+        // check that new matches confirm (i.e., no typos)
+        if (!is_valid_confirm($new_password,$confirm_password)) {
+            flash("New passwords don't match", "warning");
         } else {
-            $updates['password'] = password_hash($new_pass, PASSWORD_BCRYPT);
+            //validate current password against password rules
+            $hasError = false;
+            if (!is_valid_password($new_password)) {
+                //echo "Password too short<br>";
+                flash("Password must be at least 8 characters long.", "danger");
+                $hasError = true;
+            }
+            if (!$hasError) {
+                // fetch current hash
+                try {
+                    $db = getDB();
+                    $stmt = $db->prepare("SELECT password from Users where id = :id");
+                    // using get_user_id() in this block to ensure we don't mistakenly allow changing someone else's password
+                    $stmt->execute([":id" => get_user_id()]);
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if (isset($result["password"])) {
+                        // verify current vs hash
+                        if (!password_verify($current_password, $result["password"])) {
+                            flash("Current password is invalid", "warning");
+                        } else {
+                            // change password
+                            $new_hash = password_hash($new_password, PASSWORD_BCRYPT);
+                            $query = "UPDATE Users set password = :password where id = :id";
+                            $stmt = $db->prepare($query);
+                            $stmt->execute([
+                                ":id" => get_user_id(),
+                                ":password" => $new_hash
+                            ]);
+                            $updated_rows = $stmt->rowCount();
+                            if ($updated_rows === 0) {
+                                flash("No changes made to password", "warning");
+                            } else if ($updated_rows == 1) {
+                                flash("Password updated successfully", "success");
+                            } else {
+                                // this shouldn't happen, but we log it just in case
+                                error_log("Unexpected number of rows updated for password change: " . $updated_rows);
+                            }
+                        }
+                    } else {
+                        error_log("No password field in result");
+                    }
+                } catch (Exception $e) {
+                    flash("Error processing password change", "danger");
+                    error_log("Error processing password change: " . var_export($e, true));
+                }
+            }
         }
-    }
-    if (!$error && $updates) {
-        $set = [];
-        $params = [':id' => $user_id];
-        foreach ($updates as $k => $v) {
-            $set[] = "$k = :$k";
-            $params[":$k"] = $v;
-        }
-        $sql = 'UPDATE users SET ' . implode(', ', $set) . ', modified = NOW() WHERE id = :id';
-        $stmt = $db->prepare($sql);
-        $stmt->execute($params);
-        $success = 'Profile updated!';
-        // Refresh user info
-        $stmt = $db->prepare('SELECT username, email FROM users WHERE id = :id');
-        $stmt->execute([':id' => $user_id]);
-        $user = $stmt->fetch();
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>User Profile - Recipe Explorer</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<div class="profile-container">
-    <h2>Your Profile</h2>
-    <?php if ($error): ?>
-        <div class="error-msg"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-    <?php if ($success): ?>
-        <div class="success-msg"><?php echo htmlspecialchars($success); ?></div>
-    <?php endif; ?>
-    <form method="post" autocomplete="off">
-        <div class="form-group">
-            <label>Username</label>
-            <input type="text" value="<?php echo htmlspecialchars($user['username']); ?>" disabled>
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" maxlength="100" value="<?php echo htmlspecialchars($user['email']); ?>">
-        </div>
-        <div class="form-group">
-            <label for="password">New Password</label>
-            <input type="password" id="password" name="password" minlength="6" maxlength="60">
-        </div>
-        <div class="form-group">
-            <label for="confirm">Confirm New Password</label>
-            <input type="password" id="confirm" name="confirm" minlength="6" maxlength="60">
-        </div>
-        <button type="submit">Update Profile</button>
-    </form>
-    <p><a href="dashboard.php">&larr; Back to Dashboard</a></p>
-</div>
-</body>
-</html>
+<h3>Profile</h3>
+<form method="POST" onsubmit="return validate(this);" novalidate>
+    <div class="mb-3">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" value="<?php se($email); ?>" required pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" maxlength="100" />
+    </div>
+    <div class="mb-3">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" value="<?php se($username); ?>" required maxlength="30" pattern="^[a-z0-9_-]+$" />
+    </div>
+    <!-- DO NOT PRELOAD PASSWORD -->
+    <div>Password Reset</div>
+    <div class="mb-3">
+        <label for="cp">Current Password</label>
+        <input type="password" name="currentPassword" id="cp" minlength="8" maxlength="60" />
+    </div>
+    <div class="mb-3">
+        <label for="np">New Password</label>
+        <input type="password" name="newPassword" id="np" minlength="8" maxlength="60" />
+    </div>
+    <div class="mb-3">
+        <label for="conp">Confirm Password</label>
+        <input type="password" name="confirmPassword" id="conp" minlength="8" maxlength="60" />
+    </div>
+    <input type="submit" value="Update Profile" name="save" />
+</form>
+<script src="helpers.js"></script>
+<script>
+    // UCID: wg99 | Date: 2025-07-06 | JS validation for profile form
+    function validate(form) {
+        let email = form.email.value.trim();
+        let username = form.username.value.trim();
+        let cp = form.currentPassword.value;
+        let np = form.newPassword.value;
+        let conp = form.confirmPassword.value;
+        let valid = true;
+        // Email validation
+        if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
+            flash("Please enter a valid email address.", "danger");
+            valid = false;
+        }
+        // Username validation
+        if (!username.match(/^[a-z0-9_-]+$/)) {
+            flash("Username must be lowercase, alphanumerical, and can only contain _ or -", "danger");
+            valid = false;
+        }
+        // If any password field is filled, require all and validate
+        if (cp || np || conp) {
+            if (!cp || !np || !conp) {
+                flash("All password fields are required to change your password.", "danger");
+                valid = false;
+            } else {
+                if (np.length < 8) {
+                    flash("New password must be at least 8 characters.", "danger");
+                    valid = false;
+                }
+                if (np !== conp) {
+                    flash("New password and confirm password must match.", "danger");
+                    valid = false;
+                }
+            }
+        }
+        return valid;
+    }
+</script>
+<?php
+require_once(__DIR__ . "/../../partials/flash.php");
+?>
