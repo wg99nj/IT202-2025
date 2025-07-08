@@ -14,6 +14,7 @@ if (!is_logged_in()) {
 </head>
 <body>
 <?php
+// UCID: wg99 | Date: 2025-07-08 | PHP validation for profile update
 $user_id = get_user_id(); // get id from session
 $email = get_user_email(); // get email from session
 $username = get_username(); // get username from session
@@ -92,6 +93,7 @@ if (isset($_POST["email"], $_POST["username"])) {
         }
     }
 }
+// UCID: wg99 | Date: 2025-07-08 | PHP validation for password update
 // handle password update
 if (isset($_POST["currentPassword"], $_POST["newPassword"], $_POST["confirmPassword"])) {
 
@@ -157,14 +159,15 @@ if (isset($_POST["currentPassword"], $_POST["newPassword"], $_POST["confirmPassw
 }
 ?>
 <h3>Profile</h3>
+<!-- UCID: wg99 | Date: 2025-07-08 | HTML5 validation for profile form -->
 <form method="POST" onsubmit="return validate(this);">
     <div class="mb-3">
         <label for="email">Email</label>
-        <input type="email" name="email" id="email" value="<?php se($email); ?>" />
+        <input type="email" name="email" id="email" value="<?php se($email); ?>" required />
     </div>
     <div class="mb-3">
         <label for="username">Username</label>
-        <input type="text" name="username" id="username" value="<?php se($username); ?>" />
+        <input type="text" name="username" id="username" value="<?php se($username); ?>" required pattern="^[a-z0-9_-]+$" />
     </div>
     <!-- DO NOT PRELOAD PASSWORD -->
     <div>Password Reset</div>
@@ -174,17 +177,17 @@ if (isset($_POST["currentPassword"], $_POST["newPassword"], $_POST["confirmPassw
     </div>
     <div class="mb-3">
         <label for="np">New Password</label>
-        <input type="password" name="newPassword" id="np" />
+        <input type="password" name="newPassword" id="np" minlength="8" />
     </div>
     <div class="mb-3">
         <label for="conp">Confirm Password</label>
-        <input type="password" name="confirmPassword" id="conp" />
+        <input type="password" name="confirmPassword" id="conp" minlength="8" />
     </div>
     <input type="submit" value="Update Profile" name="save" />
 </form>
 
 <script>
-    // UCID: wg99 | Date: 2025-07-07 | JS validation for profile form
+    // UCID: wg99 | Date: 2025-07-08 | JS validation for profile form
     function validate(form) {
         let email = form.email.value.trim();
         let username = form.username.value.trim();

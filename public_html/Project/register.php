@@ -11,27 +11,32 @@ require(__DIR__ . "/../../partials/nav.php");
 </head>
 <body>
 <h3>Register</h3>
+<!-- HTML5 validation | UCID: wg99 | Date: 2025-07-08 -->
 <form onsubmit="return validate(this)" method="POST">
     <div>
         <label for="email">Email</label>
+        <!-- HTML5 validation: type=email, required | Date: 2025-07-08 -->
         <input id="email" type="email" name="email" required />
     </div>
     <div>
         <label for="username">Username</label>
+        <!-- HTML5 validation: required, maxlength=30 | Date: 2025-07-08 -->
         <input type="text" name="username" required maxlength="30" />
     </div>
     <div>
         <label for="pw">Password</label>
+        <!-- HTML5 validation: required, minlength=8 | Date: 2025-07-08 -->
         <input type="password" id="pw" name="password" required minlength="8" />
     </div>
     <div>
         <label for="confirm">Confirm</label>
+        <!-- HTML5 validation: required, minlength=8 | Date: 2025-07-08 -->
         <input type="password" name="confirm" required minlength="8" />
     </div>
     <input type="submit" value="Register" />
 </form>
 <script>
-    // UCID: wg99 | Date: 2025-07-08 | JS validation for registration form
+    // JS validation | UCID: wg99 | Date: 2025-07-08
     function validate(form) {
         let email = form.email.value.trim();
         let username = form.username.value.trim();
@@ -62,14 +67,14 @@ require(__DIR__ . "/../../partials/nav.php");
     }
 </script>
 <?php
-//TODO 2: add PHP Code
+// PHP validation | UCID: wg99 | Date: 2025-07-08
 if (isset($_POST["email"], $_POST["password"], $_POST["confirm"], $_POST["username"])) {
 
     $email = se($_POST, "email", "", false);
     $password = se($_POST, "password", "", false);
     $confirm = se($_POST, "confirm", "", false);
     $username = se($_POST, "username", "", false);
-    // TODO 3: validate/use
+    // PHP validation steps | Date: 2025-07-08
     $hasError = false;
 
     if (empty($email)) {

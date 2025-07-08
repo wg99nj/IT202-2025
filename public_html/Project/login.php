@@ -11,6 +11,7 @@ require(__DIR__ . "/../../partials/nav.php");
 </head>
 <body>
 <h3>Login</h3>
+<!-- UCID: wg99 | Date: 2025-07-08 | HTML5 validation for login form -->
 <form onsubmit="return validate(this)" method="POST">
     <div>
         <label for="email">Email</label>
@@ -23,7 +24,7 @@ require(__DIR__ . "/../../partials/nav.php");
     <input type="submit" value="Login" />
 </form>
 <script>
-    // UCID: wg99 | Date: 2025-07-07 | JS validation for login form
+    // UCID: wg99 | Date: 2025-07-08 | JS validation for login form
     function validate(form) {
         let email = form.email.value.trim();
         let pw = form.password.value;
@@ -39,13 +40,13 @@ require(__DIR__ . "/../../partials/nav.php");
         return valid;
     }
 </script>
+
 <?php
-//TODO 2: add PHP Code
+// UCID: wg99 | Date: 2025-07-08 | PHP validation for login form
 if (isset($_POST["email"], $_POST["password"])) {
 
     $email = se($_POST, "email", "", false);
     $password = se($_POST, "password", "", false);
-    // TODO 3: validate/use
     $hasError = false;
 
     if (empty($email)) {
@@ -70,55 +71,46 @@ if (isset($_POST["email"], $_POST["password"])) {
     }
 
     if (!$hasError) {
-
-        // TODO 4: Check password and fetch user
-        if (!$hasError) {
-            //TODO 4: Check password and fetch user
-            $db = getDB();
-            $stmt = $db->prepare("SELECT id, email, password, username from Users where email = :email");
-            try {
-                $r = $stmt->execute([":email" => $email]);
-                if ($r) {
-                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                    $ambigify = false; // flag to indicate ambiguous login attempt (reduce TMI)
-                    if ($user) {
-                        $hash = $user["password"];
-                        unset($user["password"]);
-                        if (password_verify($password, $hash)) {
-
-                            $_SESSION["user"] = $user; // add the data to the active session
-                            try {
-                                //lookup potential roles
-                                $stmt = $db->prepare("SELECT Roles.name FROM Roles
-                                JOIN UserRoles on Roles.id = UserRoles.role_id
-                                where UserRoles.user_id = :user_id and Roles.is_active = 1 
-                                and UserRoles.is_active = 1");
-                                $stmt->execute([":user_id" =>get_user_id()]);
-                                $roles = $stmt->fetchAll(PDO::FETCH_ASSOC); //fetch all since we'll want multiple
-                            } catch (Exception $e) {
-                                error_log(var_export($e, true));
-                            }
-                            //save roles or empty array
-                            $_SESSION["user"]["roles"] = isset($roles)?$roles:[];
-                           
-                            die(header("Location: landing.php"));
-                        } else {
-                            //echo "Invalid password<br>";
-                            $ambigify = true; // ambiguous login attempt
+        // Check password and fetch user
+        $db = getDB();
+        $stmt = $db->prepare("SELECT id, email, password, username from Users where email = :email");
+        try {
+            $r = $stmt->execute([":email" => $email]);
+            if ($r) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                $ambigify = false; // flag to indicate ambiguous login attempt (reduce TMI)
+                if ($user) {
+                    $hash = $user["password"];
+                    unset($user["password"]);
+                    if (password_verify($password, $hash)) {
+                        $_SESSION["user"] = $user; // add the data to the active session
+                        try {
+                            //lookup potential roles
+                            $stmt = $db->prepare("SELECT Roles.name FROM Roles
+                            JOIN UserRoles on Roles.id = UserRoles.role_id
+                            where UserRoles.user_id = :user_id and Roles.is_active = 1 
+                            and UserRoles.is_active = 1");
+                            $stmt->execute([":user_id" =>get_user_id()]);
+                            $roles = $stmt->fetchAll(PDO::FETCH_ASSOC); //fetch all since we'll want multiple
+                        } catch (Exception $e) {
+                            error_log(var_export($e, true));
                         }
+                        //save roles or empty array
+                        $_SESSION["user"]["roles"] = isset($roles)?$roles:[];
+                        die(header("Location: landing.php"));
                     } else {
-                        //echo "Email not found<br>";
                         $ambigify = true; // ambiguous login attempt
                     }
-                    if ($ambigify) {
-                        flash("Invalid login attempt. Please check your email and password.", "danger");
-                    }
+                } else {
+                    $ambigify = true; // ambiguous login attempt
                 }
-            } catch (Exception $e) {
-                //echo "There was an error logging in<br>"; // user-friendly message
-                flash("There was an error logging in. Please try again later.", "danger");
-                error_log("Login Error: " . var_export($e, true)); // log the technical error for debugging
+                if ($ambigify) {
+                    flash("Invalid login attempt. Please check your email and password.", "danger");
+                }
             }
+        } catch (Exception $e) {
+            flash("There was an error logging in. Please try again later.", "danger");
+            error_log("Login Error: " . var_export($e, true));
         }
     }
 }
