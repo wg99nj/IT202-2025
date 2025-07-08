@@ -2,6 +2,7 @@
 require(__DIR__ . "/../../partials/nav.php");
 ?>
 <h3>Login</h3>
+<form onsubmit="return validate(this)" method="POST">
     <div>
         <label for="email">Email</label>
         <input id="email" type="email" name="email" required />
@@ -13,11 +14,20 @@ require(__DIR__ . "/../../partials/nav.php");
     <input type="submit" value="Login" />
 </form>
 <script>
+    // UCID: wg99 | Date: 2025-07-07 | JS validation for login form
     function validate(form) {
-        //TODO 1: implement JavaScript validation (you'll do this on your own towards the end of Milestone1)
-        //ensure it returns false for an error and true for success
-
-        return true;
+        let email = form.email.value.trim();
+        let pw = form.password.value;
+        let valid = true;
+        if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
+            alert("Please enter a valid email address.");
+            valid = false;
+        }
+        if (pw.length < 8) {
+            alert("Password must be at least 8 characters.");
+            valid = false;
+        }
+        return valid;
     }
 </script>
 <?php
@@ -108,35 +118,3 @@ if (isset($_POST["email"], $_POST["password"])) {
 <?php
 require(__DIR__ . "/../../partials/flash.php");
 ?>
-<form onsubmit="return validate(this)" method="POST" novalidate>
-    <div>
-        <label for="email">Email</label>
-        <input id="email" type="email" name="email" required pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" maxlength="100" />
-    </div>
-    <div>
-        <label for="pw">Password</label>
-        <input type="password" id="pw" name="password" required minlength="8" maxlength="60" />
-    </div>
-    <input type="submit" value="Login" />
-</form>
-<script src="helpers.js"></script>
-<script>
-    // UCID: wg99 | Date: 2025-07-06 | JS validation for login form
-    function validate(form) {
-        let email = form.email.value.trim();
-        let pw = form.password.value;
-        let valid = true;
-        if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
-            flash("Please enter a valid email address.", "danger");
-            valid = false;
-        }
-        if (pw.length < 8) {
-            flash("Password must be at least 8 characters.", "danger");
-            valid = false;
-        }
-        return valid;
-    }
-</script>
-<?php
-// UCID: wg99 | Date: 2025-07-07 | PHP login logic
-// ...existing code...

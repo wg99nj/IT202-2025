@@ -148,34 +148,34 @@ if (isset($_POST["currentPassword"], $_POST["newPassword"], $_POST["confirmPassw
 }
 ?>
 <h3>Profile</h3>
-<form method="POST" onsubmit="return validate(this);" novalidate>
+<form method="POST" onsubmit="return validate(this);">
     <div class="mb-3">
         <label for="email">Email</label>
-        <input type="email" name="email" id="email" value="<?php se($email); ?>" required pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" maxlength="100" />
+        <input type="email" name="email" id="email" value="<?php se($email); ?>" />
     </div>
     <div class="mb-3">
         <label for="username">Username</label>
-        <input type="text" name="username" id="username" value="<?php se($username); ?>" required maxlength="30" pattern="^[a-z0-9_-]+$" />
+        <input type="text" name="username" id="username" value="<?php se($username); ?>" />
     </div>
     <!-- DO NOT PRELOAD PASSWORD -->
     <div>Password Reset</div>
     <div class="mb-3">
         <label for="cp">Current Password</label>
-        <input type="password" name="currentPassword" id="cp" minlength="8" maxlength="60" />
+        <input type="password" name="currentPassword" id="cp" />
     </div>
     <div class="mb-3">
         <label for="np">New Password</label>
-        <input type="password" name="newPassword" id="np" minlength="8" maxlength="60" />
+        <input type="password" name="newPassword" id="np" />
     </div>
     <div class="mb-3">
         <label for="conp">Confirm Password</label>
-        <input type="password" name="confirmPassword" id="conp" minlength="8" maxlength="60" />
+        <input type="password" name="confirmPassword" id="conp" />
     </div>
     <input type="submit" value="Update Profile" name="save" />
 </form>
-<script src="helpers.js"></script>
+
 <script>
-    // UCID: wg99 | Date: 2025-07-06 | JS validation for profile form
+    // UCID: wg99 | Date: 2025-07-07 | JS validation for profile form
     function validate(form) {
         let email = form.email.value.trim();
         let username = form.username.value.trim();
@@ -185,26 +185,26 @@ if (isset($_POST["currentPassword"], $_POST["newPassword"], $_POST["confirmPassw
         let valid = true;
         // Email validation
         if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
-            flash("Please enter a valid email address.", "danger");
+            alert("Please enter a valid email address.");
             valid = false;
         }
         // Username validation
         if (!username.match(/^[a-z0-9_-]+$/)) {
-            flash("Username must be lowercase, alphanumerical, and can only contain _ or -", "danger");
+            alert("Username must be lowercase, alphanumerical, and can only contain _ or -");
             valid = false;
         }
         // If any password field is filled, require all and validate
         if (cp || np || conp) {
             if (!cp || !np || !conp) {
-                flash("All password fields are required to change your password.", "danger");
+                alert("All password fields are required to change your password.");
                 valid = false;
             } else {
                 if (np.length < 8) {
-                    flash("New password must be at least 8 characters.", "danger");
+                    alert("New password must be at least 8 characters.");
                     valid = false;
                 }
                 if (np !== conp) {
-                    flash("New password and confirm password must match.", "danger");
+                    alert("New password and confirm password must match.");
                     valid = false;
                 }
             }
