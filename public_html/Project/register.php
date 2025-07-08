@@ -16,12 +16,12 @@ require(__DIR__ . "/../../partials/nav.php");
     <div>
         <label for="email">Email</label>
         <!-- HTML5 validation: type=email, required | Date: 2025-07-08 -->
-        <input id="email" type="email" name="email" required />
+        <input id="email" type="email" name="email" required value="<?php if (isset($_POST['email'])) se($_POST['email']); ?>" />
     </div>
     <div>
         <label for="username">Username</label>
         <!-- HTML5 validation: required, maxlength=30 | Date: 2025-07-08 -->
-        <input type="text" name="username" required maxlength="30" />
+        <input type="text" name="username" required maxlength="30" value="<?php if (isset($_POST['username'])) se($_POST['username']); ?>" />
     </div>
     <div>
         <label for="pw">Password</label>
