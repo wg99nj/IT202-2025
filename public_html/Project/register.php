@@ -11,26 +11,26 @@ require(__DIR__ . "/../../partials/nav.php");
 </head>
 <body>
 <h3>Register</h3>
-<!-- HTML5 validation | UCID: wg99 | Date: 2025-07-08 -->
+<!-- HTML5 validation | UCID: wg99 | Date: 2025-07-07 -->
 <form onsubmit="return validate(this)" method="POST">
     <div>
         <label for="email">Email</label>
-        <!-- HTML5 validation: type=email, required | Date: 2025-07-08 -->
+        <!-- HTML5 validation: type=email, required | Date: 2025-07-07 -->
         <input id="email" type="email" name="email" required value="<?php if (isset($_POST['email'])) se($_POST['email']); ?>" />
     </div>
     <div>
         <label for="username">Username</label>
-        <!-- HTML5 validation: required, maxlength=30 | Date: 2025-07-08 -->
+        <!-- HTML5 validation: required, maxlength=30 | Date: 2025-07-07 -->
         <input type="text" name="username" required maxlength="30" value="<?php if (isset($_POST['username'])) se($_POST['username']); ?>" />
     </div>
     <div>
         <label for="pw">Password</label>
-        <!-- HTML5 validation: required, minlength=8 | Date: 2025-07-08 -->
+        <!-- HTML5 validation: required, minlength=8 | Date: 2025-07-07 -->
         <input type="password" id="pw" name="password" required minlength="8" />
     </div>
     <div>
         <label for="confirm">Confirm</label>
-        <!-- HTML5 validation: required, minlength=8 | Date: 2025-07-08 -->
+        <!-- HTML5 validation: required, minlength=8 | Date: 2025-07-07 -->
         <input type="password" name="confirm" required minlength="8" />
     </div>
     <input type="submit" value="Register" />
