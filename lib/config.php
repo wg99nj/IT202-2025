@@ -34,9 +34,9 @@ if(!$db_url || count($db_url) === 0){
     throw new Exception("Config parsing error, check the logs for further details");
 }
 else{
-    $dbhost   = $db_url["host"];
-    $dbuser = $db_url["user"];
-    $dbpass = $db_url["pass"];
-    $dbdatabase       = substr($db_url["path"],1);
+    $dbhost = "localhost";
+    $dbuser = "root";
+    $dbpass = "Max091122";
+    $dbdatabase = "it202";
 }
 ?>
