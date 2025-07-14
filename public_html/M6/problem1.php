@@ -27,9 +27,21 @@ function processBirds($birds) {
     // Note: use the $birds variable to iterate over, don't directly touch $a1-$a4
     // TODO Objective: Extract the name, color, region into a separate multi-dimension array called $subset
     $subset = []; // result array
-    // Start edits
-    
-    // End edits
+
+    // UCID: wg99 | Date: 2025-07-14
+    // Step 1: Loop through each bird in the $birds array
+    // Step 2: For each bird, get the 'name', 'color', and 'region' fields
+    // Step 3: Add an associative array with these fields to $subset
+    // Step 4: After the loop, $subset should contain only the required info for each bird
+// Start edits
+    foreach ($birds as $bird) {
+        $subset[] = [
+            "name" => $bird["name"],
+            "color" => $bird["color"],
+            "region" => $bird["region"]
+        ];
+    }
+// end edits
     echo "<pre>" . var_export($subset, true) . "</pre>";
    
 }
