@@ -49,9 +49,22 @@ function joinArrays($users, $activities) {
     // Note: use the $users and $activities variables to iterate over, don't directly touch $a1-$a4 arrays
     // TODO Objective: Add logic to join both arrays on the userId property into one $joined array
     $joined = []; // result array
-    // Start edits
-    
 
+    // UCID: wg99 | Date: 2025-07-14
+    // Step 1: Loop through each user in $users
+    // Step 2: For each user, find the matching activity in $activities by userId
+    // Step 3: Combine user info and activity into a single array
+    // Step 4: Add the combined array to $joined
+
+    // Start edits
+    foreach ($users as $user) {
+        foreach ($activities as $activity) {
+            if ($user["userId"] === $activity["userId"]) {
+                $joined[] = array_merge($user, $activity);
+                break;
+            }
+        }
+    }
     // End edits
     echo "<pre>" . var_export($joined, true) . "</pre>";
 }
