@@ -33,3 +33,22 @@ if (isset($_GET["country"])) {
     }
 }
 ?>
+<div class="container" style="max-width:600px;margin:auto;padding:2em;">
+    <h2>CountryWise API Test</h2>
+    <form method="get" action="">
+        <label for="country">Enter Country Name:</label>
+        <input type="text" id="country" name="country" value="<?php echo isset($_GET['country']) ? htmlspecialchars($_GET['country']) : ''; ?>" required>
+        <button type="submit">Fetch Country Data</button>
+    </form>
+    <hr>
+    <h3>Result:</h3>
+    <pre style="background:#f4f4f4;padding:1em;border-radius:5px;">
+<?php
+if (!empty($result)) {
+    echo htmlspecialchars(json_encode($result, JSON_PRETTY_PRINT));
+} else {
+    echo "No data yet. Submit a country name above.";
+}
+?>
+    </pre>
+</div>
