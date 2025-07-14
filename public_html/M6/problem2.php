@@ -26,11 +26,24 @@ function processCars($cars) {
     
     // Note: use the $cars variable to iterate over, don't directly touch $a1-$a4
     // TODO Objective: Add logic to create a new array ($processedCars) with original properties plus age and isClassic. isClassic is a boolean based on today\'s year and the $classic_age variable.
-    $currentYear = null; // determine current year
+    $currentYear = (int)date("Y"); // determine current year
     $processedCars = []; // result array
     $classic_age = 25; // don't change this value
+
+    // UCID: wg99 | Date: 2025-07-14
+    // Step 1: Loop through each car in the $cars array
+    // Step 2: For each car, calculate age as currentYear - car's year
+    // Step 3: For each car, set isClassic to true if age >= $classic_age, else false
+    // Step 4: Add all original properties plus age and isClassic to $processedCars
+
     // Start edits
-   
+    foreach ($cars as $car) {
+        $age = $currentYear - $car["year"];
+        $isClassic = $age >= $classic_age;
+        $car["age"] = $age;
+        $car["isClassic"] = $isClassic;
+        $processedCars[] = $car;
+    }
     // End edits
     echo "<pre>" . var_export($processedCars, true) . "</pre>";
     
