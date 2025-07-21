@@ -40,6 +40,17 @@ require(__DIR__."/../lib/functions.php");
             <li><a href="<?php get_url('admin/list_roles.php', true); ?>">List Roles</a></li>
             <li><a href="<?php get_url('admin/assign_roles.php', true); ?>">Assign Roles</a></li>
         <?php endif; ?>
+          <?php if (has_role("Admin")) : ?>
+            <div class="dropdown">
+                <button class="dropbtn">Stocks
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-content">
+                    <li><a href="<?php get_url('admin/add_country.php', true); ?>">Add Country</a></li>
+                    <li><a href="<?php get_url('admin/list_countries.php', true); ?>">List Countries</a></li>
+                </div>
+            </div>
+        <?php endif; ?>
         <?php if (is_logged_in()) : ?>
             <li><a href="<?php get_url('logout.php', true);?>">Logout</a></li>
         <?php endif; ?>
