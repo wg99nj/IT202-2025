@@ -1,7 +1,6 @@
 <?php
 require(__DIR__ . "/../../../partials/nav.php");
-require(__DIR__ . "/../../../lib/db.php");
-require(__DIR__ . "/../../../lib/db_helpers.php");
+
 
 if (!has_role("Admin")) {
     flash("You don't have permission to view this page", "warning");
@@ -88,3 +87,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </div>
 </body>
 </html>
+<?php
+require(__DIR__."/../../partials/flash.php");
+?>

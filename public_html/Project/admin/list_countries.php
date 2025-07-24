@@ -1,7 +1,6 @@
 <?php
 require(__DIR__ . "/../../../partials/nav.php");
-require(__DIR__ . "/../../../lib/db.php");
-require(__DIR__ . "/../../../lib/db_helpers.php");
+
 
 // Admin-only access (adjust as needed for other roles)
 if (!has_role("Admin")) {
@@ -89,3 +88,6 @@ $countries = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 </body>
 </html>
+<?php
+require(__DIR__."/../../partials/flash.php");
+?>
