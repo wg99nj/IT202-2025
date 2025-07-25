@@ -20,6 +20,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             $country_api = $result[0] ?? $result; // API returns array of countries
             $country_api["is_api"] = 1;
+            // Flatten nested values for DB
+            if (isset($country_api["capital"]) && is_array($country_api["capital"])) {
+                $country_api["capital"] = implode(", ", $country_api["capital"]);
+            }
+            if (isset($country_api["flag"]) && is_array($country_api["flag"])) {
+                $country_api["flag"] = isset($country_api["flag"]["svg"]) ? $country_api["flag"]["svg"] : json_encode($country_api["flag"]);
+            }
+            if (isset($country_api["population"]) && is_array($country_api["population"])) {
+                $country_api["population"] = isset($country_api["population"]["value"]) ? $country_api["population"]["value"] : json_encode($country_api["population"]);
+            }
+            if (isset($country_api["languages"]) && is_array($country_api["languages"])) {
+                // Recursively extract all string values from nested arrays/objects
+                function flatten_languages($arr) {
+                    $result = [];
+                    foreach ($arr as $item) {
+                        if (is_array($item)) {
+                            $result = array_merge($result, flatten_languages($item));
+                        } elseif (is_object($item)) {
+                            $result[] = implode(", ", (array)$item);
+                        } elseif (is_string($item)) {
+                            $result[] = $item;
+                        }
+                    }
+                    return $result;
+                }
+                $country_api["languages"] = implode(", ", flatten_languages($country_api["languages"]));
+            }
+            if (isset($country_api["currency"]) && is_array($country_api["currency"])) {
+                $country_api["currency"] = implode(", ", $country_api["currency"]);
+            }
+            if (isset($country_api["continent"]) && is_array($country_api["continent"])) {
+                $country_api["continent"] = implode(", ", $country_api["continent"]);
+            }
             // Insert or update using db_helpers.php
             try {
                 $r = insert("country_data", $country_api, ["update_duplicate"=>true, "columns_to_update"=>["capital","flag","population","currency","languages","continent"]]);

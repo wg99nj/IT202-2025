@@ -21,38 +21,56 @@ if ($domain != "localhost") {
     ]);
 }
 session_start();
-require(__DIR__."/../lib/functions.php");
+require(__DIR__ . "/../lib/functions.php");
 ?>
-<link rel="stylesheet" href="<?php get_url('styles.css', true);?>">
-<script src="<?php get_url('helpers.js', true);?>"></script>
-<nav>
-    <ul>
+<!-- include css and js files -->
+<!-- Include Bootstrap CSS and JS before custom content so it can be reused or overriden -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+<link rel="stylesheet" href="<?php get_url('styles.css', true); ?>">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+<script src="<?php get_url('helpers.js', true); ?>"></script>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand text-uppercase" href="#">wg99</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
         <?php if (is_logged_in()) : ?>
-            <li><a href="<?php get_url('landing.php', true);?>">Landing</a></li>
-            <li><a href="<?php get_url('profile.php', true);?>">Profile</a></li>
+          <li class="nav-item"><a class="nav-link" href="<?php get_url('landing.php', true);?>">Landing</a></li>
+          <li class="nav-item"><a class="nav-link" href="<?php get_url('profile.php', true);?>">Profile</a></li>
         <?php endif; ?>
         <?php if (!is_logged_in()) : ?>
-            <li><a href="<?php get_url('login.php', true);?>">Login</a></li>
-            <li><a href="<?php get_url('register.php', true);?>">Register</a></li>
+          <li class="nav-item"><a class="nav-link" href="<?php get_url('login.php', true);?>">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="<?php get_url('register.php', true);?>">Register</a></li>
         <?php endif; ?>
         <?php if (has_role("Admin")) : ?>
-            <li><a href="<?php get_url('admin/create_role.php', true); ?>">Create Role</a></li>
-            <li><a href="<?php get_url('admin/list_roles.php', true); ?>">List Roles</a></li>
-            <li><a href="<?php get_url('admin/assign_roles.php', true); ?>">Assign Roles</a></li>
-        <?php endif; ?>
-          <?php if (has_role("Admin")) : ?>
-            <div class="dropdown">
-                <button class="dropbtn">Stocks
-                    <i class="fa fa-caret-down"></i>
-                </button>
-                <div class="dropdown-content">
-                    <li><a href="<?php get_url('admin/add_country.php', true); ?>">Add Country</a></li>
-                    <li><a href="<?php get_url('admin/list_countries.php', true); ?>">List Countries</a></li>
-                </div>
-            </div>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="rolesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Roles
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="rolesDropdown">
+              <li><a class="dropdown-item" href="<?php get_url('admin/create_role.php', true); ?>">Create Role</a></li>
+              <li><a class="dropdown-item" href="<?php get_url('admin/list_roles.php', true); ?>">List Roles</a></li>
+              <li><a class="dropdown-item" href="<?php get_url('admin/assign_roles.php', true); ?>">Assign Roles</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="countriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Countries
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="countriesDropdown">
+              <li><a class="dropdown-item" href="<?php get_url('admin/add_country.php', true); ?>">Add Country</a></li>
+              <li><a class="dropdown-item" href="<?php get_url('admin/list_countries.php', true); ?>">List Countries</a></li>
+            </ul>
+          </li>
         <?php endif; ?>
         <?php if (is_logged_in()) : ?>
-            <li><a href="<?php get_url('logout.php', true);?>">Logout</a></li>
+          <li class="nav-item"><a class="nav-link" href="<?php get_url('logout.php', true);?>">Logout</a></li>
         <?php endif; ?>
-    </ul>
+      </ul>
+    </div>
+  </div>
 </nav>

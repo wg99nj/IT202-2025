@@ -2,10 +2,14 @@
 // UCID: wg99 | Date: 2025-07-21
 // Flexible CountryWise API fetcher
 
+require_once(__DIR__ . "/load_api_keys.php"); 
+
 function fetch_countrywise_data($country = "all", $fields = "name") {
-    $apiKey = getenv('COUNTRYWISE_API_KEY');
+    global $API_KEYS; 
+    $apiKey = $API_KEYS["COUNTRYWISE_API_KEY"] ?? null;
+
     if (!$apiKey) {
-        return ["error" => "API key is missing. Please set COUNTRYWISE_API_KEY in your environment."];
+        return ["error" => "API key is missing. Please set COUNTRYWISE_API_KEY in your .env or Heroku config vars."];
     }
 
     $url = "https://countrywise.p.rapidapi.com/?country=" . urlencode($country) . "&fields=" . urlencode($fields);
@@ -33,8 +37,3 @@ function fetch_countrywise_data($country = "all", $fields = "name") {
         return json_decode($response, true);
     }
 }
-
-// Example usage for important fields:
-// $data = fetch_countrywise_data("gb", "name,capital,flag,population,currency,languages,continent");
-// $data = fetch_countrywise_data("us", "name,capital,population");
-// $data = fetch_countrywise_data("all", "name,flag");
