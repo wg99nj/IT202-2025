@@ -88,5 +88,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </body>
 </html>
 <?php
-require(__DIR__."/../../partials/flash.php");
+require_once(__DIR__ . "/../../../partials/flash.php");
 ?>
