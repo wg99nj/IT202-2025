@@ -9,29 +9,31 @@ if (!has_role("Admin")) {
 
 $message = "";
 $country_api = [];
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $action = $_POST["action"] ?? "manual";
     if ($action === "api") {
+        // API fetch
         $country_code = $_POST["country_code"] ?? "";
         $fields = $_POST["fields"] ?? "name,capital,flag,population,currency,languages,continent";
         $result = fetch_countrywise_data($country_code, $fields);
         if (isset($result["error"])) {
             $message = $result["error"];
         } else {
-            $country_api = $result[0] ?? $result; // API returns array of countries
+            $country_api = $result[0] ?? $result;
             $country_api["is_api"] = 1;
-            // Flatten nested values for DB
+
+            // Flatten values
             if (isset($country_api["capital"]) && is_array($country_api["capital"])) {
                 $country_api["capital"] = implode(", ", $country_api["capital"]);
             }
             if (isset($country_api["flag"]) && is_array($country_api["flag"])) {
-                $country_api["flag"] = isset($country_api["flag"]["svg"]) ? $country_api["flag"]["svg"] : json_encode($country_api["flag"]);
+                $country_api["flag"] = $country_api["flag"]["svg"] ?? json_encode($country_api["flag"]);
             }
             if (isset($country_api["population"]) && is_array($country_api["population"])) {
-                $country_api["population"] = isset($country_api["population"]["value"]) ? $country_api["population"]["value"] : json_encode($country_api["population"]);
+                $country_api["population"] = $country_api["population"]["value"] ?? json_encode($country_api["population"]);
             }
             if (isset($country_api["languages"]) && is_array($country_api["languages"])) {
-                // Recursively extract all string values from nested arrays/objects
                 function flatten_languages($arr) {
                     $result = [];
                     foreach ($arr as $item) {
@@ -53,30 +55,47 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if (isset($country_api["continent"]) && is_array($country_api["continent"])) {
                 $country_api["continent"] = implode(", ", $country_api["continent"]);
             }
-            // Insert or update using db_helpers.php
+
             try {
-                $r = insert("country_data", $country_api, ["update_duplicate"=>true, "columns_to_update"=>["capital","flag","population","currency","languages","continent"]]);
-                if ($r["lastInsertId"]) {
-                    $message = "Inserted/Updated record " . $r["lastInsertId"];
-                } else {
-                    $message = "Error inserting/updating record";
-                }
+                $r = insert("country_data", $country_api, [
+                    "update_duplicate" => true,
+                    "columns_to_update" => ["capital", "flag", "population", "currency", "languages", "continent"]
+                ]);
+                $message = $r["lastInsertId"] ? "Inserted/Updated record " . $r["lastInsertId"] : "Error inserting/updating record";
             } catch (Exception $e) {
                 $message = "Error: " . $e->getMessage();
             }
         }
     } else {
-        $name = $_POST["name"] ?? "";
-        $capital = $_POST["capital"] ?? "";
-        $flag = $_POST["flag"] ?? "";
+        // Manual submission
+        $name = trim($_POST["name"] ?? "");
+        $capital = trim($_POST["capital"] ?? "");
+        $flag = trim($_POST["flag"] ?? "");
         $population = $_POST["population"] ?? null;
-        $currency = $_POST["currency"] ?? "";
-        $languages = $_POST["languages"] ?? "";
-        $continent = $_POST["continent"] ?? "";
+        $currency = trim($_POST["currency"] ?? "");
+        $languages = trim($_POST["languages"] ?? "");
+        $continent = trim($_POST["continent"] ?? "");
         $is_api = isset($_POST["is_api"]) ? 1 : 0;
-        // Basic validation
+
+        // PHP VALIDATIONS
         if (!$name) {
             $message = "Country name is required.";
+        } elseif (!$capital) {
+            $message = "Capital is required.";
+        } elseif (!$continent) {
+            $message = "Continent is required.";
+        } elseif (!is_null($population) && (!is_numeric($population) || $population < 0)) {
+            $message = "Population must be a non-negative number.";
+        } elseif ($flag && !filter_var($flag, FILTER_VALIDATE_URL)) {
+            $message = "Flag must be a valid URL.";
+        } elseif (!$currency) {
+            $message = "Currency is required.";
+        } elseif (!preg_match('/^[A-Za-z,\s]+$/', $currency)) {
+            $message = "Currency should contain only letters and commas.";
+        } elseif (!$languages) {
+            $message = "Languages are required.";
+        } elseif (!preg_match('/^[A-Za-z,\s]+$/', $languages)) {
+            $message = "Languages should contain only letters and commas.";
         } else {
             $data = [
                 "name" => $name,
@@ -89,12 +108,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "is_api" => $is_api
             ];
             try {
-                $r = insert("country_data", $data, ["update_duplicate"=>true, "columns_to_update"=>["capital","flag","population","currency","languages","continent"]]);
-                if ($r["lastInsertId"]) {
-                    $message = "Inserted/Updated record " . $r["lastInsertId"];
-                } else {
-                    $message = "Error inserting/updating record";
-                }
+                $r = insert("country_data", $data, [
+                    "update_duplicate" => true,
+                    "columns_to_update" => ["capital", "flag", "population", "currency", "languages", "continent"]
+                ]);
+                $message = $r["lastInsertId"] ? "Inserted/Updated record " . $r["lastInsertId"] : "Error inserting/updating record";
             } catch (Exception $e) {
                 $message = "Error: " . $e->getMessage();
             }
@@ -108,13 +126,53 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Add Country Data (Admin)</title>
     <link rel="stylesheet" href="../styles.css">
     <script>
+    // JS VALIDATION
     function validateForm() {
-        let name = document.forms["countryForm"]["name"].value;
+        const form = document.forms["countryForm"];
+        const name = form["name"].value.trim();
+        const capital = form["capital"].value.trim();
+        const flag = form["flag"].value.trim();
+        const population = form["population"].value.trim();
+        const currency = form["currency"].value.trim();
+        const languages = form["languages"].value.trim();
+        const continent = form["continent"].value.trim();
+
         if (!name) {
             alert("Country name is required.");
             return false;
         }
-        // Add more JS validation as needed
+        if (!capital) {
+            alert("Capital is required.");
+            return false;
+        }
+        if (!continent) {
+            alert("Continent is required.");
+            return false;
+        }
+        if (population && (isNaN(population) || population < 0)) {
+            alert("Population must be a non-negative number.");
+            return false;
+        }
+        if (flag && !/^https?:\/\/.+/.test(flag)) {
+            alert("Flag must be a valid URL.");
+            return false;
+        }
+        if (!currency) {
+            alert("Currency is required.");
+            return false;
+        }
+        if (!/^[A-Za-z,\s]+$/.test(currency)) {
+            alert("Currency should contain only letters and commas.");
+            return false;
+        }
+        if (!languages) {
+            alert("Languages are required.");
+            return false;
+        }
+        if (!/^[A-Za-z,\s]+$/.test(languages)) {
+            alert("Languages should contain only letters and commas.");
+            return false;
+        }
         return true;
     }
     </script>
@@ -134,20 +192,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <input type="hidden" name="action" value="manual">
             <label for="name">Country Name:</label>
             <input type="text" id="name" name="name" required><br>
+
             <label for="capital">Capital:</label>
-            <input type="text" id="capital" name="capital"><br>
+            <input type="text" id="capital" name="capital" required><br>
+
             <label for="flag">Flag URL:</label>
             <input type="text" id="flag" name="flag"><br>
+
             <label for="population">Population:</label>
             <input type="number" id="population" name="population" min="0"><br>
+
             <label for="currency">Currency:</label>
-            <input type="text" id="currency" name="currency"><br>
+            <input type="text" id="currency" name="currency" required><br>
+
             <label for="languages">Languages (comma separated):</label>
-            <input type="text" id="languages" name="languages"><br>
+            <input type="text" id="languages" name="languages" required><br>
+
             <label for="continent">Continent:</label>
-            <input type="text" id="continent" name="continent"><br>
+            <input type="text" id="continent" name="continent" required><br>
+
             <label for="is_api">Is API Data:</label>
             <input type="checkbox" id="is_api" name="is_api" value="1"><br>
+
             <button type="submit">Save Country</button>
         </form>
     </div>
@@ -156,8 +222,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <input type="hidden" name="action" value="api">
             <label for="country_code">Country Code (e.g., gb, us, ca):</label>
             <input type="text" id="country_code" name="country_code" required><br>
+
             <label for="fields">Fields (comma separated):</label>
             <input type="text" id="fields" name="fields" value="name,capital,flag,population,currency,languages,continent"><br>
+
             <button type="submit">Fetch & Save Country</button>
         </form>
         <?php if (!empty($country_api)): ?>
@@ -168,24 +236,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </div>
 <script>
 function switchTab(tab) {
-    let manual = document.getElementById('manual');
-    let api = document.getElementById('api');
-    if (tab === 'manual') {
-        manual.style.display = '';
-        api.style.display = 'none';
-    } else {
-        manual.style.display = 'none';
-        api.style.display = '';
-    }
-}
-function validateForm() {
-    let name = document.forms["countryForm"]["name"].value;
-    if (!name) {
-        alert("Country name is required.");
-        return false;
-    }
-    // Add more JS validation as needed
-    return true;
+    document.getElementById('manual').style.display = tab === 'manual' ? '' : 'none';
+    document.getElementById('api').style.display = tab === 'api' ? '' : 'none';
 }
 </script>
 </body>
