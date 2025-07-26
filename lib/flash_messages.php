@@ -9,7 +9,7 @@
  */
 function flash($msg = "", $color = "info")
 {
-    if(session_status() !== PHP_SESSION_ACTIVE){
+    if (session_status() !== PHP_SESSION_ACTIVE) {
         error_log("Flash messages require an active session.");
         return;
     }
@@ -29,7 +29,7 @@ function flash($msg = "", $color = "info")
  */
 function getMessages()
 {
-    if(session_status() !== PHP_SESSION_ACTIVE){
+    if (session_status() !== PHP_SESSION_ACTIVE) {
         error_log("Flash messages require an active session.");
         return [];
     }
