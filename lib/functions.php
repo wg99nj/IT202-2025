@@ -11,7 +11,7 @@ require(__DIR__ . "/safer_echo.php");
 //TODO 2: filter helpers
 require(__DIR__ . "/validations.php");
 
-require(__DIR__."/get_url.php"); // above user_helpers since is_logged_in uses this
+require(__DIR__ . "/get_url.php"); // above user_helpers since is_logged_in uses this
 //TODO 3: User helpers
 require(__DIR__ . "/user_helpers.php");
 //duplicate email/username
@@ -19,5 +19,6 @@ require(__DIR__ . "/duplicate_user_details.php");
 //reset session
 require(__DIR__ . "/reset_session.php");
 
-
-?>
+require(__DIR__ . "/api_helper.php");
+require(__DIR__ . "/Api_countrywise.php");
+require(__DIR__ . "/db_helpers.php");
