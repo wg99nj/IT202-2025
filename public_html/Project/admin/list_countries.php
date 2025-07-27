@@ -34,30 +34,57 @@ $countries = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head>
     <title>Country List (Admin)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles.css">
+    <script>
+    // Client-side validation for filter form
+    function validateFilterForm() {
+        let filter = document.querySelector('input[name="filter"]').value.trim();
+        let limit = document.querySelector('input[name="limit"]').value.trim();
+        let errors = [];
+        if (filter.length > 64) errors.push("Filter text too long.");
+        if (limit && (isNaN(limit) || parseInt(limit) < 1 || parseInt(limit) > 100)) errors.push("Limit must be between 1 and 100.");
+        if (errors.length > 0) {
+            alert(errors.join("\n"));
+            return false;
+        }
+        return true;
+    }
+    </script>
 </head>
 <body>
 <div class="container" style="max-width:900px;margin:auto;padding:2em;">
-    <h2>Country List</h2>
-    <form method="get" style="margin-bottom:1em;">
-        <input type="text" name="filter" placeholder="Filter by name/capital" value="<?= htmlspecialchars($filter) ?>">
-        <select name="sort">
-            <option value="name" <?= $sort=="name"?"selected":"" ?>>Name</option>
-            <option value="capital" <?= $sort=="capital"?"selected":"" ?>>Capital</option>
-            <option value="population" <?= $sort=="population"?"selected":"" ?>>Population</option>
-        </select>
-        <select name="order">
-            <option value="ASC" <?= $order=="ASC"?"selected":"" ?>>ASC</option>
-            <option value="DESC" <?= $order=="DESC"?"selected":"" ?>>DESC</option>
-        </select>
-        <input type="number" name="limit" min="1" max="100" value="<?= $limit ?>">
-        <button type="submit">Apply</button>
+    <h2 class="mb-4">Country List</h2>
+    <form method="get" class="row g-3 align-items-center mb-4" onsubmit="return validateFilterForm()">
+        <div class="col-auto">
+            <input type="text" class="form-control" name="filter" placeholder="Filter by name/capital" value="<?= htmlspecialchars($filter) ?>">
+        </div>
+        <div class="col-auto">
+            <select class="form-select" name="sort">
+                <option value="name" <?= $sort=="name"?"selected":"" ?>>Name</option>
+                <option value="capital" <?= $sort=="capital"?"selected":"" ?>>Capital</option>
+                <option value="population" <?= $sort=="population"?"selected":"" ?>>Population</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <select class="form-select" name="order">
+                <option value="ASC" <?= $order=="ASC"?"selected":"" ?>>ASC</option>
+                <option value="DESC" <?= $order=="DESC"?"selected":"" ?>>DESC</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <input type="number" class="form-control" name="limit" min="1" max="100" value="<?= $limit ?>">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Apply</button>
+        </div>
     </form>
     <?php if (empty($countries)): ?>
-        <div>No results available.</div>
+        <div class="alert alert-warning">No results available.</div>
     <?php else: ?>
-        <table border="1" cellpadding="6" style="width:100%;background:#fff;">
-            <thead>
+        <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle bg-white">
+            <thead class="table-light">
                 <tr>
                     <th>Name</th>
                     <th>Capital</th>
@@ -74,16 +101,17 @@ $countries = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($c["capital"] ?? "") ?></td>
                     <td><?= htmlspecialchars($c["population"] ?? "") ?></td>
                     <td><?= htmlspecialchars($c["currency"] ?? "") ?></td>
-                    <td><?= $c["is_api"] ? "API" : "Manual" ?></td>
+                    <td><span class="badge bg-<?= $c["is_api"] ? "info" : "secondary" ?>"><?= $c["is_api"] ? "API" : "Manual" ?></span></td>
                     <td>
-                        <a href="edit_country.php?id=<?= $c["id"] ?>">Edit</a> |
-                        <a href="view_country.php?id=<?= $c["id"] ?>">View</a> |
-                        <a href="delete_country.php?id=<?= $c["id"] ?>" onclick="return confirm('Delete this country?')">Delete</a>
+                        <a href="edit_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-warning me-1">Edit</a>
+                        <a href="view_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-info me-1">View</a>
+                        <a href="delete_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this country?')">Delete</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
     <?php endif; ?>
 </div>
 </body>
