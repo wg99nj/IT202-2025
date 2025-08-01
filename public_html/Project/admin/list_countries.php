@@ -3,9 +3,9 @@ require(__DIR__ . "/../../../partials/nav.php");
 
 
 // Admin-only access (adjust as needed for other roles)
-if (!has_role("Admin")) {
-    flash("You don't have permission to view this page", "warning");
-    die(header("Location: " . get_url("landing.php")));
+if (!is_logged_in()) {
+    flash("You must be logged in to view this page", "warning");
+    die(header("Location: " . get_url("login.php")));
 }
 
 // Handle filters, sorting, and pagination
@@ -108,10 +108,12 @@ $countries = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= htmlspecialchars($c["currency"] ?? "") ?></td>
                         <td><span class="badge bg-<?= $c["is_api"] ? "info" : "secondary" ?>" style="font-size:1em;padding:0.5em 1em;border-radius:12px;"><?= $c["is_api"] ? "API" : "Manual" ?></span></td>
                         <td>
-                            <a href="edit_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-warning rounded-pill shadow-sm me-1">Edit</a>
-                            <a href="view_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-info rounded-pill shadow-sm me-1">View</a>
-                            <a href="delete_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-danger rounded-pill shadow-sm me-1" onclick="return confirm('Delete this country?')">Delete</a>
-                            <?php if (is_logged_in() && !has_role('Admin')): ?>
+                            <?php if (has_role('Admin')): ?>
+                                <a href="edit_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-warning rounded-pill shadow-sm me-1">Edit</a>
+                                <a href="view_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-info rounded-pill shadow-sm me-1">View</a>
+                                <a href="delete_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-danger rounded-pill shadow-sm me-1" onclick="return confirm('Delete this country?')">Delete</a>
+                            <?php else: ?>
+                                <a href="view_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-info rounded-pill shadow-sm me-1">View</a>
                                 <?php
                                 $user_id = get_user_id();
                                 $db2 = getDB();
