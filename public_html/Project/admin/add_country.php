@@ -179,59 +179,98 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body>
 <div class="container" style="max-width:700px;margin:auto;padding:2em;">
-    <h2>Add Country Data (Admin Only)</h2>
+    <h2 class="text-center mb-4">Add Country Data (Admin Only)</h2>
     <?php if ($message): ?>
-        <div class="message"><?= htmlspecialchars($message) ?></div>
+        <div class="alert alert-warning text-center mb-3"><?= htmlspecialchars($message) ?></div>
     <?php endif; ?>
-    <ul class="nav nav-tabs">
-        <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('manual')">Manual Entry</a></li>
-        <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('api')">Fetch from API</a></li>
+    <ul class="nav nav-pills justify-content-center mb-4" style="gap:1em;">
+        <li class="nav-item"><a class="nav-link active" href="#" onclick="switchTab('manual');styleTabs('manual');" id="tab-manual" style="font-size:1.1em;padding:0.7em 2em;border-radius:8px;">Manual Entry</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="switchTab('api');styleTabs('api');" id="tab-api" style="font-size:1.1em;padding:0.7em 2em;border-radius:8px;transition:background 0.2s;">Fetch from API</a></li>
     </ul>
-    <div id="manual" class="tab-target">
-        <form name="countryForm" method="post" onsubmit="return validateForm();">
-            <input type="hidden" name="action" value="manual">
-            <label for="name">Country Name:</label>
-            <input type="text" id="name" name="name" required><br>
-
-            <label for="capital">Capital:</label>
-            <input type="text" id="capital" name="capital" required><br>
-
-            <label for="flag">Flag URL:</label>
-            <input type="text" id="flag" name="flag"><br>
-
-            <label for="population">Population:</label>
-            <input type="number" id="population" name="population" min="0"><br>
-
-            <label for="currency">Currency:</label>
-            <input type="text" id="currency" name="currency" required><br>
-
-            <label for="languages">Languages (comma separated):</label>
-            <input type="text" id="languages" name="languages" required><br>
-
-            <label for="continent">Continent:</label>
-            <input type="text" id="continent" name="continent" required><br>
-
-            <label for="is_api">Is API Data:</label>
-            <input type="checkbox" id="is_api" name="is_api" value="1"><br>
-
-            <button type="submit">Save Country</button>
-        </form>
+    <script>
+    function styleTabs(active) {
+        document.getElementById('tab-manual').classList.remove('active');
+        document.getElementById('tab-api').classList.remove('active');
+        if (active === 'manual') {
+            document.getElementById('tab-manual').classList.add('active');
+            document.getElementById('tab-manual').style.background = '#4f7cff';
+            document.getElementById('tab-manual').style.color = '#fff';
+            document.getElementById('tab-api').style.background = '';
+            document.getElementById('tab-api').style.color = '#4f7cff';
+        } else {
+            document.getElementById('tab-api').classList.add('active');
+            document.getElementById('tab-api').style.background = '#4f7cff';
+            document.getElementById('tab-api').style.color = '#fff';
+            document.getElementById('tab-manual').style.background = '';
+            document.getElementById('tab-manual').style.color = '#4f7cff';
+        }
+    }
+    // Initial style
+    styleTabs('manual');
+    </script>
+    <div id="manual" class="tab-target" style="width:100%;display:block;">
+        <div style="background:#fff;border-radius:16px;box-shadow:0 4px 24px 0 rgba(0,0,0,0.08);padding:2em 2em 1em 2em;max-width:480px;margin:auto;">
+            <form name="countryForm" method="post" onsubmit="return validateForm();" class="d-flex flex-column gap-3">
+                <input type="hidden" name="action" value="manual">
+                <div>
+                    <label for="name" class="form-label">Country Name:</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div>
+                    <label for="capital" class="form-label">Capital:</label>
+                    <input type="text" id="capital" name="capital" class="form-control" required>
+                </div>
+                <div>
+                    <label for="flag" class="form-label">Flag URL:</label>
+                    <input type="text" id="flag" name="flag" class="form-control">
+                </div>
+                <div>
+                    <label for="population" class="form-label">Population:</label>
+                    <input type="number" id="population" name="population" class="form-control" min="0">
+                </div>
+                <div>
+                    <label for="currency" class="form-label">Currency:</label>
+                    <input type="text" id="currency" name="currency" class="form-control" required>
+                </div>
+                <div>
+                    <label for="languages" class="form-label">Languages (comma separated):</label>
+                    <input type="text" id="languages" name="languages" class="form-control" required>
+                </div>
+                <div>
+                    <label for="continent" class="form-label">Continent:</label>
+                    <input type="text" id="continent" name="continent" class="form-control" required>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="is_api" name="is_api" value="1" class="form-check-input">
+                    <label for="is_api" class="form-check-label">Is API Data</label>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary w-100" style="font-size:1.1em;">Save Country</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div id="api" class="tab-target" style="display:none;">
-        <form name="apiForm" method="post">
-            <input type="hidden" name="action" value="api">
-            <label for="country_code">Country Code (e.g., gb, us, ca):</label>
-            <input type="text" id="country_code" name="country_code" required><br>
-
-            <label for="fields">Fields (comma separated):</label>
-            <input type="text" id="fields" name="fields" value="name,capital,flag,population,currency,languages,continent"><br>
-
-            <button type="submit">Fetch & Save Country</button>
-        </form>
-        <?php if (!empty($country_api)): ?>
-            <h4>Fetched Country Data:</h4>
-            <pre><?= htmlspecialchars(json_encode($country_api, JSON_PRETTY_PRINT)) ?></pre>
-        <?php endif; ?>
+    <div id="api" class="tab-target" style="width:100%;display:none;">
+        <div style="background:#fff;border-radius:16px;box-shadow:0 4px 24px 0 rgba(0,0,0,0.08);padding:2em 2em 1em 2em;max-width:480px;margin:auto;">
+            <form name="apiForm" method="post" class="d-flex flex-column gap-3">
+                <input type="hidden" name="action" value="api">
+                <div>
+                    <label for="country_code" class="form-label">Country Code (e.g., gb, us, ca):</label>
+                    <input type="text" id="country_code" name="country_code" class="form-control" required>
+                </div>
+                <div>
+                    <label for="fields" class="form-label">Fields (comma separated):</label>
+                    <input type="text" id="fields" name="fields" class="form-control" value="name,capital,flag,population,currency,languages,continent">
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary w-100" style="font-size:1.1em;">Fetch & Save Country</button>
+                </div>
+            </form>
+            <?php if (!empty($country_api)): ?>
+                <h4 class="mt-4">Fetched Country Data:</h4>
+                <pre style="background:#f7faff;border-radius:8px;padding:1em;max-height:300px;overflow:auto;"><?= htmlspecialchars(json_encode($country_api, JSON_PRETTY_PRINT)) ?></pre>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 <script>

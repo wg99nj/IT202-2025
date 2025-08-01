@@ -47,6 +47,7 @@ if (!$country) {
     <a href="edit_country.php?id=<?= $country["id"] ?>" class="btn btn-primary">Edit</a>
     <a href="delete_country.php?id=<?= $country["id"] ?>" class="btn btn-danger" onclick="return confirm('Delete this country?')">Delete</a>
     <a href="list_countries.php" class="btn btn-secondary">Back to List</a>
+        <a href="../my_countries.php" class="btn btn-secondary">Back to My Countries</a>
 </div>
 </body>
 </html>
