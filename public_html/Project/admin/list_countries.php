@@ -124,7 +124,7 @@ $countries = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php if ($is_associated): ?>
                                     <span class="badge bg-success" style="font-size:1em;padding:0.5em 1em;border-radius:12px;">Added</span>
                                 <?php else: ?>
-                                    <a href="/Project/add_user_country.php?country_id=<?= $c["id"] ?>" class="btn btn-sm btn-primary rounded-pill shadow-sm" onclick="return confirm('Add this country to your list?')">Add to My Countries</a>
+                                    <a href="/Project/add_user_country.php?country_id=<?= $c["id"] ?>" class="btn btn-sm btn-primary rounded-pill shadow-sm" onclick="return confirm('Add this country to your countries?')">Add</a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </td>

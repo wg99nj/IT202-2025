@@ -106,8 +106,8 @@ $total_count = $count_stmt->fetchColumn();
                         <td><?= htmlspecialchars($c["population"] ?? "") ?></td>
                         <td><?= htmlspecialchars($c["currency"] ?? "") ?></td>
                         <td>
-                            <a href="view_country.php?id=<?= $c["id"] ?>">View</a> |
-                            <a href="remove_user_country.php?country_id=<?= $c["id"] ?>" onclick="return confirm('Remove this association?')">Remove</a>
+                            <a href="view_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-info rounded-pill shadow-sm me-1">View</a>
+                            <a href="remove_user_country.php?country_id=<?= $c["id"] ?>" class="btn btn-sm btn-danger rounded-pill shadow-sm" onclick="return confirm('Remove this association?')">Remove</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
