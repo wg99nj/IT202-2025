@@ -52,65 +52,85 @@ $countries = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     </script>
 </head>
-<body>
-<div class="container" style="max-width:900px;margin:auto;padding:2em;">
-    <h2 class="mb-4">Country List</h2>
-    <form method="get" class="row g-3 align-items-center mb-4" onsubmit="return validateFilterForm()">
-        <div class="col-auto">
-            <input type="text" class="form-control" name="filter" placeholder="Filter by name/capital" value="<?= htmlspecialchars($filter) ?>">
+<body style="background: #f4f6fc;">
+<div class="container" style="max-width:1000px;margin:auto;padding:2em;">
+    <h2 class="mb-4 text-center fw-bold" style="font-size:2.2rem;">Country List</h2>
+    <div class="d-flex justify-content-center mb-4">
+        <div class="card shadow-sm p-4" style="min-width:340px;max-width:400px;background:#fff;border-radius:18px;">
+            <form method="get" onsubmit="return validateFilterForm()">
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="filter" placeholder="Filter by name/capital" value="<?= htmlspecialchars($filter) ?>">
+                </div>
+                <div class="mb-3">
+                    <select class="form-select" name="sort">
+                        <option value="name" <?= $sort=="name"?"selected":"" ?>>Name</option>
+                        <option value="capital" <?= $sort=="capital"?"selected":"" ?>>Capital</option>
+                        <option value="population" <?= $sort=="population"?"selected":"" ?>>Population</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <select class="form-select" name="order">
+                        <option value="ASC" <?= $order=="ASC"?"selected":"" ?>>ASC</option>
+                        <option value="DESC" <?= $order=="DESC"?"selected":"" ?>>DESC</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control" name="limit" min="1" max="100" value="<?= $limit ?>">
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">Apply</button>
+                </div>
+            </form>
         </div>
-        <div class="col-auto">
-            <select class="form-select" name="sort">
-                <option value="name" <?= $sort=="name"?"selected":"" ?>>Name</option>
-                <option value="capital" <?= $sort=="capital"?"selected":"" ?>>Capital</option>
-                <option value="population" <?= $sort=="population"?"selected":"" ?>>Population</option>
-            </select>
-        </div>
-        <div class="col-auto">
-            <select class="form-select" name="order">
-                <option value="ASC" <?= $order=="ASC"?"selected":"" ?>>ASC</option>
-                <option value="DESC" <?= $order=="DESC"?"selected":"" ?>>DESC</option>
-            </select>
-        </div>
-        <div class="col-auto">
-            <input type="number" class="form-control" name="limit" min="1" max="100" value="<?= $limit ?>">
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Apply</button>
-        </div>
-    </form>
+    </div>
     <?php if (empty($countries)): ?>
-        <div class="alert alert-warning">No results available.</div>
+        <div class="alert alert-warning text-center">No results available.</div>
     <?php else: ?>
-        <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle bg-white">
-            <thead class="table-light">
-                <tr>
-                    <th>Name</th>
-                    <th>Capital</th>
-                    <th>Population</th>
-                    <th>Currency</th>
-                    <th>API/Manual</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($countries as $c): ?>
-                <tr>
-                    <td><?= htmlspecialchars($c["name"] ?? "") ?></td>
-                    <td><?= htmlspecialchars($c["capital"] ?? "") ?></td>
-                    <td><?= htmlspecialchars($c["population"] ?? "") ?></td>
-                    <td><?= htmlspecialchars($c["currency"] ?? "") ?></td>
-                    <td><span class="badge bg-<?= $c["is_api"] ? "info" : "secondary" ?>"><?= $c["is_api"] ? "API" : "Manual" ?></span></td>
-                    <td>
-                        <a href="edit_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-warning me-1">Edit</a>
-                        <a href="view_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-info me-1">View</a>
-                        <a href="delete_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this country?')">Delete</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="card shadow-sm p-3 mb-4" style="border-radius:18px;background:#fff;">
+            <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle bg-white" style="border-radius:12px;overflow:hidden;">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Capital</th>
+                        <th>Population</th>
+                        <th>Currency</th>
+                        <th>API/Manual</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($countries as $c): ?>
+                    <tr style="transition:background 0.2s;" onmouseover="this.style.background='#f0f4ff'" onmouseout="this.style.background='#fff'">
+                        <td><?= htmlspecialchars($c["name"] ?? "") ?></td>
+                        <td><?= htmlspecialchars($c["capital"] ?? "") ?></td>
+                        <td><?= htmlspecialchars($c["population"] ?? "") ?></td>
+                        <td><?= htmlspecialchars($c["currency"] ?? "") ?></td>
+                        <td><span class="badge bg-<?= $c["is_api"] ? "info" : "secondary" ?>" style="font-size:1em;padding:0.5em 1em;border-radius:12px;"><?= $c["is_api"] ? "API" : "Manual" ?></span></td>
+                        <td>
+                            <a href="edit_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-warning rounded-pill shadow-sm me-1">Edit</a>
+                            <a href="view_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-info rounded-pill shadow-sm me-1">View</a>
+                            <a href="delete_country.php?id=<?= $c["id"] ?>" class="btn btn-sm btn-danger rounded-pill shadow-sm me-1" onclick="return confirm('Delete this country?')">Delete</a>
+                            <?php if (is_logged_in() && !has_role('Admin')): ?>
+                                <?php
+                                $user_id = get_user_id();
+                                $db2 = getDB();
+                                $check_stmt = $db2->prepare("SELECT 1 FROM UserCountry WHERE user_id = :user_id AND country_id = :country_id");
+                                $check_stmt->execute([':user_id' => $user_id, ':country_id' => $c["id"]]);
+                                $is_associated = $check_stmt->fetchColumn();
+                                ?>
+                                <?php if ($is_associated): ?>
+                                    <span class="badge bg-success" style="font-size:1em;padding:0.5em 1em;border-radius:12px;">Added</span>
+                                <?php else: ?>
+                                    <a href="/Project/add_user_country.php?country_id=<?= $c["id"] ?>" class="btn btn-sm btn-primary rounded-pill shadow-sm" onclick="return confirm('Add this country to your list?')">Add to My Countries</a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            </div>
         </div>
     <?php endif; ?>
 </div>

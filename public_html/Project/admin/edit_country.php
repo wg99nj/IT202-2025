@@ -111,38 +111,52 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body>
 <div class="container" style="max-width:700px;margin:auto;padding:2em;">
-    <h2>Edit Country</h2>
+    <h2 class="text-center mb-4">Edit Country</h2>
     <?php if ($message): ?>
-        <div class="message"><?= htmlspecialchars($message) ?></div>
+        <div class="alert alert-warning text-center mb-3"><?= htmlspecialchars($message) ?></div>
     <?php endif; ?>
-    <form name="editForm" method="post" onsubmit="return validateEditForm();">
-        <label for="name">Country Name:</label>
-        <input type="text" id="name" name="name" value="<?= htmlspecialchars($country["name"] ?? "") ?>" required><br>
-
-        <label for="capital">Capital:</label>
-        <input type="text" id="capital" name="capital" value="<?= htmlspecialchars($country["capital"] ?? "") ?>"><br>
-
-        <label for="flag">Flag URL:</label>
-        <input type="text" id="flag" name="flag" value="<?= htmlspecialchars($country["flag"] ?? "") ?>"><br>
-
-        <label for="population">Population:</label>
-        <input type="number" id="population" name="population" min="0" value="<?= htmlspecialchars($country["population"] ?? "") ?>" required><br>
-
-        <label for="currency">Currency:</label>
-        <input type="text" id="currency" name="currency" value="<?= htmlspecialchars($country["currency"] ?? "") ?>" required><br>
-
-        <label for="languages">Languages (comma separated):</label>
-        <input type="text" id="languages" name="languages" value="<?= htmlspecialchars($country["languages"] ?? "") ?>" required><br>
-
-        <label for="continent">Continent:</label>
-        <input type="text" id="continent" name="continent" value="<?= htmlspecialchars($country["continent"] ?? "") ?>"><br>
-
-        <label for="is_api">Is API Data:</label>
-        <input type="checkbox" id="is_api" name="is_api" value="1" <?= $country["is_api"] ? "checked" : "" ?>><br>
-
-        <button type="submit">Update Country</button>
-    </form>
-    <a href="list_countries.php">← Back to List</a>
+    <div style="background:#fff;border-radius:16px;box-shadow:0 4px 24px 0 rgba(0,0,0,0.08);padding:2em 2em 1em 2em;max-width:480px;margin:auto;">
+        <form name="editForm" method="post" onsubmit="return validateEditForm();" class="d-flex flex-column gap-3">
+            <div>
+                <label for="name" class="form-label">Country Name:</label>
+                <input type="text" id="name" name="name" class="form-control" value="<?= htmlspecialchars($country["name"] ?? "") ?>" required>
+            </div>
+            <div>
+                <label for="capital" class="form-label">Capital:</label>
+                <input type="text" id="capital" name="capital" class="form-control" value="<?= htmlspecialchars($country["capital"] ?? "") ?>">
+            </div>
+            <div>
+                <label for="flag" class="form-label">Flag URL:</label>
+                <input type="text" id="flag" name="flag" class="form-control" value="<?= htmlspecialchars($country["flag"] ?? "") ?>">
+            </div>
+            <div>
+                <label for="population" class="form-label">Population:</label>
+                <input type="number" id="population" name="population" class="form-control" min="0" value="<?= htmlspecialchars($country["population"] ?? "") ?>" required>
+            </div>
+            <div>
+                <label for="currency" class="form-label">Currency:</label>
+                <input type="text" id="currency" name="currency" class="form-control" value="<?= htmlspecialchars($country["currency"] ?? "") ?>" required>
+            </div>
+            <div>
+                <label for="languages" class="form-label">Languages (comma separated):</label>
+                <input type="text" id="languages" name="languages" class="form-control" value="<?= htmlspecialchars($country["languages"] ?? "") ?>" required>
+            </div>
+            <div>
+                <label for="continent" class="form-label">Continent:</label>
+                <input type="text" id="continent" name="continent" class="form-control" value="<?= htmlspecialchars($country["continent"] ?? "") ?>">
+            </div>
+            <div class="form-check">
+                <input type="checkbox" id="is_api" name="is_api" value="1" class="form-check-input" <?= $country["is_api"] ? "checked" : "" ?>>
+                <label for="is_api" class="form-check-label">Is API Data</label>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary w-100" style="font-size:1.1em;">Update Country</button>
+            </div>
+        </form>
+        <div class="text-center mt-3">
+            <a href="list_countries.php" class="btn btn-link">← Back to List</a>
+        </div>
+    </div>
 </div>
 </body>
 </html>
