@@ -171,12 +171,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <tbody>
                 <?php foreach ($rows as $row): ?>
                     <tr>
-                        <td><a href="profile.php?id=<?= $row["user_id"] ?>"><?= htmlspecialchars($row["username"] ?? "") ?></a></td>
-                        <td><a href="view_country.php?id=<?= $row["country_id"] ?>"><?= htmlspecialchars($row["country_name"] ?? "") ?></a></td>
+                        <td><a href="profile.php?id=<?= $row["user_id"] ?>" class="btn btn-sm btn-primary rounded-pill px-3" style="font-weight:500;"><?= htmlspecialchars($row["username"] ?? "") ?></a></td>
+                        <td><a href="view_country.php?id=<?= $row["country_id"] ?>" class="btn btn-sm btn-info rounded-pill px-3" style="font-weight:500;"><?= htmlspecialchars($row["country_name"] ?? "") ?></a></td>
                         <td><?= htmlspecialchars($row["created"] ?? "") ?></td>
                         <td><?= htmlspecialchars($row["user_count"] ?? "") ?></td>
                         <td>
-                            <a href="remove_user_country.php?country_id=<?= $row["country_id"] ?>&user_id=<?= $row["user_id"] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Remove this association?')">Remove</a>
+                            <a href="remove_user_country.php?country_id=<?= $row["country_id"] ?>&user_id=<?= $row["user_id"] ?>" class="btn btn-sm btn-danger rounded-pill px-3" style="font-weight:500;" onclick="return confirm('Remove this association?')">Remove</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
