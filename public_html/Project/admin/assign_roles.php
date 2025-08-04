@@ -92,8 +92,8 @@ if (isset($_POST["username"])) {
     <input type="search" name="username" placeholder="Username search" value="<?php se($username, false); ?>" />
     <input type="submit" value="Search" />
 </form>
-<!-- empty toggle form, inputs will use the form attribute to associate with this form -->
-<form id="toggleForm" method="POST"></form>
+<!-- toggle form, inputs will use the form attribute to associate with this form -->
+<form id="toggleForm" method="POST" style="display:none;"></form>
 <?php if (isset($username) && !empty($username)) : ?>
     <input form="toggleForm" type="hidden" name="username" value="<?php se($username, false); ?>" />
 <?php endif; ?>
@@ -104,34 +104,35 @@ if (isset($_POST["username"])) {
     </thead>
     <tbody>
         <tr>
-            <td>
-                <!-- nested table for users -->
-                <table>
+            <td style="vertical-align:top;width:50%;padding-right:1em;">
+                <!-- User list -->
+                <div class="border rounded p-2 mb-3" style="max-height:250px;overflow:auto;background:#fff;">
                     <?php foreach ($users as $user) : ?>
-                        <tr>
-                            <td>
-
-                                <input form="toggleForm" id="user_<?php se($user, 'id'); ?>" type="checkbox" name="users[]" value="<?php se($user, 'id'); ?>" />
-                                <label form="toggleForm" for="user_<?php se($user, 'id'); ?>"><?php se($user, "username"); ?></label>
-                            </td>
-                            <td><?php se($user, "roles", "No Roles"); ?></td>
-                        </tr>
+                        <div class="form-check mb-2">
+                            <input form="toggleForm" id="user_<?php se($user, 'id'); ?>" type="checkbox" name="users[]" value="<?php se($user, 'id'); ?>" class="form-check-input" />
+                            <label form="toggleForm" for="user_<?php se($user, 'id'); ?>" class="form-check-label"><?php se($user, "username"); ?></label>
+                            <span class="ms-2 text-muted" style="font-size:0.9em;">(<?php se($user, "roles", "No Roles"); ?>)</span>
+                        </div>
                     <?php endforeach; ?>
-                </table>
+                </div>
             </td>
-            <td>
-                <!-- nested data for roles -->
-                <?php foreach ($active_roles as $role) : ?>
-                    <div>
-                        <input form="toggleForm" id="role_<?php se($role, 'id'); ?>" type="checkbox" name="roles[]" value="<?php se($role, 'id'); ?>" />
-                        <label form="toggleForm" for="role_<?php se($role, 'id'); ?>"><?php se($role, "name"); ?></label>
-                    </div>
-                <?php endforeach; ?>
+            <td style="vertical-align:top;width:50%;padding-left:1em;">
+                <!-- Roles list -->
+                <div class="border rounded p-2 mb-3" style="max-height:250px;overflow:auto;background:#fff;">
+                    <?php foreach ($active_roles as $role) : ?>
+                        <div class="form-check mb-2">
+                            <input form="toggleForm" id="role_<?php se($role, 'id'); ?>" type="checkbox" name="roles[]" value="<?php se($role, 'id'); ?>" class="form-check-input" />
+                            <label form="toggleForm" for="role_<?php se($role, 'id'); ?>" class="form-check-label"><?php se($role, "name"); ?></label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </td>
         </tr>
     </tbody>
 </table>
-<input form="toggleForm" type="submit" value="Toggle Roles" />
+<div style="width:100%;display:flex;justify-content:center;margin-top:2em;">
+    <input form="toggleForm" type="submit" value="Toggle Roles" />
+</div>
 
 <?php
 //note we need to go up 1 more directory
