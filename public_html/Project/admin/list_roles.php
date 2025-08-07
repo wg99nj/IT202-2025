@@ -55,7 +55,7 @@ try {
     <input type="search" name="role" placeholder="Role Filter" value="<?php se($_POST, "role"); ?>" />
     <input type="submit" value="Search" />
 </form>
-<small>Note: If you disabled Admin, you won't be able to login as Admin again until you re-enable it (may require a manual table edit).</small>
+
 <table>
     <thead>
         <th>ID</th>
