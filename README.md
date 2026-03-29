@@ -1,7 +1,7 @@
 # Project: Predicting Obesity Levels Using Machine Learning
 ### Group 7: Wilfer Gelabert & Sabeeh Qureshi
-## Course: AI-Driven Text Analytics IS-392
-## Step 3: Project Code Review
+### Course: AI-Driven Text Analytics IS-392
+### Step 3: Project Code Review
 
 ── HOW TO RUN IT ──────────────────────────────────────────
 1. Open the notebook in  either Google Colab or Jupyter Notebook
