@@ -2,7 +2,7 @@
 
 require_once "base.php";
 
-$ucid = "wg99"; // <-- set your ucid
+$ucid = "wg99"; // UCID: wg99
 
 // Don't edit the arrays below, they are used to test your code
 $array1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -12,17 +12,20 @@ $array4 = [9, 9, 8, 8, 7, 7, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, 0, 0];
 
 function printOdds($arr, $arrayNumber)
 {
-    // Only make edits between the designated "Start" and "End" comments
     printArrayInfo($arr, $arrayNumber);
 
-    // Challenge: Print odd values only in a single line separated by commas
-    // Step 1: sketch out plan using comments (include ucid and date)
-    // Step 2: Add/commit your outline of comments (required for full credit)
-    // Step 3: Add code to solve the problem (add/commit as needed)
+    // UCID: wg99 | Date: 2025-06-08
+    // PLAN:
+    // 1. Loop through the array or use array_filter to isolate odd numbers.
+    // 2. Check if a number is odd using ($num % 2 != 0)
+    // 3. Collect the odd numbers into a new array.
+    // 4. Use implode() to output them as a single comma-separated line.
 
     echo "Output Array: ";
     // Start Solution Edits
 
+    $odds = array_filter($arr, fn($num) => $num % 2 !== 0);
+    echo implode(", ", $odds);
 
     // End Solution Edits
     echo "<br>______________________________________<br>";
