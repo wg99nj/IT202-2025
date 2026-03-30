@@ -11,31 +11,30 @@ $array3 = ["  hello   world  ", "php    programming  ", "  extra    spaces  betw
     "      leading and trailing spaces      ", "multiple      spaces"];
 $array4 = ["hello world", "php programming", "short", "a", "even"];
 
-
 function transformText($arr, $arrayNumber) {
-    // Only make edits between the designated "Start" and "End" comments
     printArrayInfoBasic($arr, $arrayNumber);
 
-    // Challenge 1: Remove non-alphanumeric characters except spaces
-    // Challenge 2: Convert text to Title Case
-    // Challenge 3: Trim leading/trailing spaces and remove duplicate spaces
-    // Result 1-3: Assign final phrase to `$placeholderForModifiedPhrase`
-    // Challenge 4 (extra credit): Extract up to the middle 3 characters (middle index and +/- 1 if it's not the first/last character),
-    // Do not include the first or last character of the phrase/word. (e.g., oven should show as ve)
-    // assign the result to `$placeholderForMiddleCharacters`
-    // If the phrase is shorter than 3 characters, return "Not enough characters"
-
-    // Step 1: sketch out plan using comments (include ucid and date)
-    // Step 2: Add/commit your outline of comments (required for full credit)
-    // Step 3: Add code to solve the problem (add/commit as needed)
-    $placeholderForModifiedPhrase = "";
-    $placeholderForMiddleCharacters = "";
     foreach ($arr as $index => $text) {
-        // Start Solution Edits
+        // Step 1: Remove non-alphanumeric characters except spaces
+        $text = preg_replace("/[^a-zA-Z0-9 ]/", "", $text);
 
-        
+        // Step 2: Trim and reduce multiple spaces to one
+        $text = preg_replace("/\s+/", " ", trim($text));
 
-        // End Solution Edits
+        // Step 3: Convert to Title Case
+        $placeholderForModifiedPhrase = ucwords(strtolower($text));
+
+        // Step 4: Get middle 3 characters (not first/last)
+        $cleaned = str_replace(" ", "", $placeholderForModifiedPhrase); // no spaces for middle char calc
+        $length = strlen($cleaned);
+        if ($length < 3) {
+            $placeholderForMiddleCharacters = "Not enough characters";
+        } else {
+            $middle = intdiv($length, 2);
+            $start = max(1, $middle - 1); // avoid first char
+            $placeholderForMiddleCharacters = substr($cleaned, $start, 3);
+        }
+
         echo "<div>";
         printStringTransformations($index, $placeholderForModifiedPhrase, $placeholderForMiddleCharacters);
         echo "</div>";
@@ -51,5 +50,4 @@ transformText($array2, 2);
 transformText($array3, 3);
 transformText($array4, 4);
 printFooter($ucid, 4);
-
 ?>
