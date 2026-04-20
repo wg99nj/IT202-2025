@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carousel UI</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="challenge3">
+  <nav>
+    <ul>
+      <li><a href="challenge1.html">Challenge 1</a></li>
+      <li><a href="challenge2.html">Challenge 2</a></li>
+      <li><a href="challenge3.html" class="active">Challenge 3</a></li>
+    </ul>
+  </nav>
+
+  <!-- UCID: wg99 | Date: 2025-06-16 -->
+  <header>Header Section (wg99)</header>
+
+  <!-- Button Navigation -->
+  <nav class="carousel-buttons">
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+  </nav>
+
+  <!-- Carousel Content -->
+  <div class="carousel">
+    <div class="carousel-container">
+      <div class="panel">Panel 1: HTML Forms</div>
+      <div class="panel">Panel 2: CSS Grid</div>
+      <div class="panel">Panel 3: JavaScript Events</div>
+      <div class="panel">Panel 4: Responsive Design</div>
+      <div class="panel">Panel 5: Accessibility Best Practices</div>
+    </div>
+  </div>
+</body>
+</html>
+
+<script src="util.js"></script>
+
+<!-- JS: Carousel Logic -->
+<script>
+  // UCID: wg99 | Date: 2025-06-16
+  const panels = document.querySelectorAll('.panel');
+  let currentIndex = 0;
+
+  function updateCarousel() {
+    panels.forEach((panel, index) => {
+      panel.style.display = index === currentIndex ? 'block' : 'none';
+    });
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + panels.length) % panels.length;
+    updateCarousel();
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % panels.length;
+    updateCarousel();
+  });
+
+  updateCarousel();
+
+  // Extra Credit: Swipe functionality
+  // UCID: wg99 | Date: 2025-06-16
+  let startX = 0;
+  const container = document.querySelector('.carousel-container');
+
+  container.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  container.addEventListener('touchend', (e) => {
+    let endX = e.changedTouches[0].clientX;
+    let deltaX = startX - endX;
+
+    if (Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        currentIndex = (currentIndex + 1) % panels.length; // swipe left
+      } else {
+        currentIndex = (currentIndex - 1 + panels.length) % panels.length; // swipe right
+      }
+      updateCarousel();
+    }
+  });
+</script>
+
+<!-- CSS Styles -->
+<style>
+  /* UCID: wg99 | Date: 2025-06-16 */
+  header {
+    text-align: center;
+    padding: 1em;
+    border: 2px solid white;
+  }
+
+  .carousel-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 1em 0;
+  }
+
+  .carousel {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .carousel-container {
+    width: 80%;
+    max-width: 800px;
+    min-height: 200px;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .panel {
+    display: none;
+    width: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    padding: 2em;
+  }
+</style>

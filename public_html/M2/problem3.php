@@ -2,7 +2,7 @@
 
 require_once "base.php";
 
-$ucid = "wg99"; // <-- set your ucid
+$ucid = "wg99"; // <-- set your UCID
 
 // Don't edit the arrays below, they are used to test your code
 $array1 = [42, -17, 89, -256, 1024, -4096, 50000, -123456];
@@ -18,13 +18,35 @@ function bePositive($arr, $arrayNumber)
 
     // Challenge 1: Make each value positive
     // Challenge 2: Convert the values back to their original data type and assign it to the proper slot of the `output` array
-    // Step 1: sketch out plan using comments (include ucid and date)
-    // Step 2: Add/commit your outline of comments (required for full credit)
-    // Step 3: Add code to solve the problem (add/commit as needed)
+    // UCID: wg99 | Date: 2025-06-08
+    // Plan:
+    // Step 1: Loop through each value in the array
+    // Step 2: Get the original type of the value
+    // Step 3: Convert the value to its positive version (e.g., use abs())
+    // Step 4: Convert the value back to the original type (int, float, string)
+    // Step 5: Save it in the output array
 
     $output = array_fill(0, count($arr), null); // Initialize output array
     // Start Solution Edits
 
+    foreach ($arr as $i => $value) {
+        $originalType = gettype($value);
+        $positive = abs($value);
+
+        switch ($originalType) {
+            case "integer":
+                $output[$i] = (int)$positive;
+                break;
+            case "double":
+                $output[$i] = (float)$positive;
+                break;
+            case "string":
+                $output[$i] = (string)$positive;
+                break;
+            default:
+                $output[$i] = null;
+        }
+    }
 
     // End Solution Edits
     echo "<span>Output: </span>";
